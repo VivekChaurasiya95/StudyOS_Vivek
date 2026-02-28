@@ -33,21 +33,8 @@ const Dashboard = () => {
                 <Sidebar onMobileClose={() => setIsSidebarOpen(false)} />
             </div>
 
-            {/* Mobile RightPanel Overlay */}
-             {isRightPanelOpen && (
-                <div 
-                    onClick={() => setIsRightPanelOpen(false)} 
-                    className="fixed inset-0 bg-black/60 z-40 xl:hidden backdrop-blur-sm transition-opacity" 
-                />
-            )}
-
-            {/* Right Panel Wrapper */}
-            <div className={`fixed inset-y-0 right-0 z-50 transform transition-transform duration-300 ease-in-out xl:translate-x-0 ${isRightPanelOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-                <RightPanel />
-            </div>
-
             {/* Main Content Area */}
-            <main className="flex-1 md:ml-72 xl:mr-80 p-4 md:p-8 overflow-y-auto h-screen w-full relative z-0">
+            <main className="flex-1 md:ml-20 main-content right-panel-transition p-4 md:p-8 overflow-y-auto h-screen relative z-0">
                 {/* Header */}
                 <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                     
@@ -96,7 +83,7 @@ const Dashboard = () => {
                                 <p className="text-sm font-bold text-text-main tracking-tight">{user?.username || 'Arin GUPTA'}</p>
                                 <p className="text-xs text-text-secondary font-medium">Level 1 Scholar</p>
                             </div>
-                            <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary-light rounded-2xl flex items-center justify-center text-[#192230] font-bold text-lg shadow-lg shadow-primary/25 cursor-pointer hover:scale-105 transition-transform">
+                            <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary font-bold text-lg shadow-inner cursor-pointer hover:scale-105 transition-transform">
                                 {user?.username ? user.username[0].toUpperCase() : 'A'}
                             </div>
                         </div>
@@ -107,7 +94,7 @@ const Dashboard = () => {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mb-10 bg-surface rounded-3xl p-8 shadow-card border border-border/50 relative overflow-hidden flex flex-col md:flex-row items-center justify-between group hover:shadow-float transition-all duration-500"
+                    className="mb-10 bg-primary/10 rounded-3xl p-8 shadow-card border border-primary/20 relative overflow-hidden flex flex-col md:flex-row items-center justify-between group hover:shadow-float transition-all duration-500"
                 >
                     <div className="relative z-10 max-w-xl">
                         <h1 className="text-3xl font-bold text-text-main mb-3 tracking-tight">
@@ -119,12 +106,12 @@ const Dashboard = () => {
                         <div className="flex gap-4">
                              <button
                                 onClick={() => navigate('/focus')}
-                                className="bg-primary text-[#192230] px-8 py-3.5 rounded-2xl font-semibold shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-1 transition-all duration-300 active:scale-95"
+                                className="btn-primary"
                             >
                                 Start Session
                             </button>
                              <button
-                                className="bg-transparent text-text-main border border-border px-8 py-3.5 rounded-2xl font-semibold hover:bg-white/5 hover:border-text-secondary transition-all duration-200"
+                                className="bg-surface text-text-main border border-border px-8 py-3.5 rounded-2xl font-semibold shadow-soft hover:shadow-card transition-all duration-200"
                              >
                                 View Calendar
                              </button>
@@ -134,8 +121,7 @@ const Dashboard = () => {
                     
                     {/* Decorative Abstract Shapes */}
                     <div className="absolute right-0 top-0 h-full w-1/3 opacity-50 pointer-events-none">
-                        <div className="absolute top-10 right-10 w-32 h-32 bg-primary/10 rounded-full blur-3xl animate-pulse"></div>
-                        <div className="absolute bottom-10 right-32 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl"></div>
+                        <div className="absolute top-10 right-10 w-32 h-32 bg-primary rounded-full blur-3xl animate-pulse"></div>
                     </div>
                 </motion.div>
 
@@ -147,10 +133,10 @@ const Dashboard = () => {
                
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
                     {[
-                        { label: 'Study Hours', value: '42.5h', icon: Clock, color: 'text-blue-500', bg: 'bg-blue-50', trend: '+12%' },
-                        { label: 'Tasks Done', value: '18', icon: CheckCircle2, color: 'text-green-500', bg: 'bg-green-50', trend: '+5%' },
-                        { label: 'Current Streak', value: '7 Days', icon: Zap, color: 'text-amber-500', bg: 'bg-amber-50', trend: 'Map' },
-                        { label: 'Focus Score', value: '85', icon: TrendingUp, color: 'text-purple-500', bg: 'bg-purple-50', trend: '+2' },
+                        { label: 'Study Hours', value: '42.5h', icon: Clock, color: 'text-blue-500', bg: 'bg-blue-100', trend: '+12%' },
+                        { label: 'Tasks Done', value: '18', icon: CheckCircle2, color: 'text-primary', bg: 'bg-primary-light', trend: '+5%' },
+                        { label: 'Current Streak', value: '7 Days', icon: Zap, color: 'text-amber-500', bg: 'bg-amber-100', trend: 'Map' },
+                        { label: 'Focus Score', value: '85', icon: TrendingUp, color: 'text-purple-500', bg: 'bg-purple-100', trend: '+2' },
                     ].map((stat, i) => (
                         <motion.div
                             key={i}
@@ -158,18 +144,18 @@ const Dashboard = () => {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: i * 0.1 }}
                             onClick={() => handleFeatureClick(stat.label)}
-                            className="bg-white p-6 rounded-2xl shadow-card border border-border/40 hover:shadow-float hover:-translate-y-1 transition-all duration-300 cursor-pointer group"
+                            className="card cursor-pointer group"
                         >
                             <div className="flex justify-between items-start mb-4">
-                                <div className={`p-3 rounded-xl ${stat.bg} ${stat.color} group-hover:scale-110 transition-transform duration-300`}>
+                                <div className={`p-3 rounded-xl ${stat.bg} ${stat.color} shadow-inner group-hover:scale-110 transition-transform duration-300`}>
                                     <stat.icon size={24} strokeWidth={2.5} />
                                 </div>
-                                <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${stat.trend === 'Map' ? 'text-amber-600 bg-amber-50' : 'text-green-600 bg-green-50'}`}>
+                                <span className={`text-xs font-bold px-2.5 py-1 rounded-lg shadow-inner ${stat.trend === 'Map' ? 'text-amber-500 bg-amber-100' : 'text-primary bg-primary-light'}`}>
                                     {stat.trend}
                                 </span>
                             </div>
-                            <h4 className="text-2xl font-bold text-slate-800 mb-1 tracking-tight">{stat.value}</h4>
-                            <p className="text-sm text-slate-500 font-medium">{stat.label}</p>
+                            <h4 className="text-2xl font-bold text-text-main mb-1 tracking-tight">{stat.value}</h4>
+                            <p className="text-sm text-text-secondary font-medium">{stat.label}</p>
                         </motion.div>
                     ))}
                 </div>
@@ -192,14 +178,14 @@ const Dashboard = () => {
                                         key={i}
                                         whileHover={{ y: -5 }}
                                         onClick={() => navigate('/subjects')}
-                                        className="bg-white p-6 rounded-2xl shadow-sm border border-gray-50 group cursor-pointer hover:border-primary/30 transition-all"
+                                        className="card group cursor-pointer"
                                     >
-                                        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-4 group-hover:bg-primary group-hover:text-slate-900 transition-colors">
+                                        <div className="w-10 h-10 rounded-xl bg-background shadow-inner flex items-center justify-center text-primary mb-4 group-hover:bg-primary group-hover:text-white transition-colors">
                                             {i === 0 ? '📐' : '⚛️'}
                                         </div>
-                                        <h4 className="font-bold text-gray-800 mb-2">{subject}</h4>
-                                        <p className="text-xs text-slate-500 mb-4">Chapter 4 • 2 Tasks Pending</p>
-                                        <div className="w-full bg-gray-100 rounded-full h-1.5">
+                                        <h4 className="font-bold text-text-main mb-2">{subject}</h4>
+                                        <p className="text-xs text-text-secondary mb-4">Chapter 4 • 2 Tasks Pending</p>
+                                        <div className="w-full bg-background shadow-inner rounded-full h-1.5">
                                             <div className="bg-primary h-1.5 rounded-full" style={{ width: i === 0 ? '60%' : '30%' }}></div>
                                         </div>
                                     </motion.div>
@@ -209,37 +195,37 @@ const Dashboard = () => {
                     </div>
 
                     <div className="space-y-8">
-                        <div className="bg-surface p-6 rounded-3xl text-white relative overflow-hidden shadow-lg group border border-border/50">
+                        <div className="card text-text-main relative overflow-hidden group">
                             <div className="relative z-10">
                                 <h3 className="text-lg font-bold mb-1">Upcoming Quiz</h3>
-                                <p className="text-sm text-gray-400 mb-6">Physics: Wave Motion</p>
+                                <p className="text-sm text-text-secondary mb-6">Physics: Wave Motion</p>
                                 <div className="flex justify-between items-end">
                                     <div className="flex -space-x-3">
                                         {[1, 2, 3].map(i => (
-                                            <div key={i} className="w-8 h-8 rounded-full bg-surface-hover border-2 border-surface flex items-center justify-center text-xs">P{i}</div>
+                                            <div key={i} className="w-8 h-8 rounded-full bg-background shadow-inner border-2 border-surface flex items-center justify-center text-xs">P{i}</div>
                                         ))}
                                     </div>
                                     <button
                                         onClick={() => handleFeatureClick('Quiz Prep')}
-                                        className="bg-white text-slate-900 px-4 py-2 rounded-lg text-xs font-bold hover:bg-gray-100 transition-colors"
-                                    >
-                                        Prepare
-                                    </button>
-                                </div>
-                            </div>
-                            <div className="absolute right-0 bottom-0 w-32 h-32 bg-primary rounded-full blur-3xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
+                                className="bg-white text-primary px-4 py-2 rounded-lg text-xs font-bold hover:bg-gray-100 transition-colors"
+                            >
+                                Prepare
+                            </button>
                         </div>
+                    </div>
+                    <div className="absolute right-0 bottom-0 w-32 h-32 bg-primary-light rounded-full blur-3xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
+                </div>
 
                         <div
                             onClick={() => handleFeatureClick('Weekly Analytics')}
-                            className="bg-white p-6 rounded-2xl shadow-sm border border-gray-50 cursor-pointer hover:shadow-md transition-all"
+                            className="card cursor-pointer"
                         >
-                            <h3 className="font-bold text-gray-800 mb-4">Weekly Activity</h3>
+                            <h3 className="font-bold text-text-main mb-4">Weekly Activity</h3>
                             <div className="h-32 flex items-end justify-between px-2">
                                 {[40, 70, 50, 90, 60, 80].map((h, i) => (
-                                    <div key={i} className="w-2 bg-primary/20 rounded-t-sm relative group cursor-pointer">
+                                    <div key={i} className="w-2 bg-background shadow-inner rounded-t-sm relative group cursor-pointer">
                                         <div className="absolute bottom-0 w-full bg-primary rounded-t-sm transition-all duration-500 group-hover:bg-primary-dark" style={{ height: `${h}%` }}></div>
-                                        <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[10px] px-2 py-1 rounded transition-opacity pointer-events-none">
+                                        <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-surface text-text-main text-[10px] px-2 py-1 rounded shadow-soft transition-opacity pointer-events-none">
                                             {h}%
                                         </div>
                                     </div>
@@ -249,8 +235,23 @@ const Dashboard = () => {
                     </div>
                 </div>
             </main>
+
+            {/* Mobile RightPanel Overlay */}
+            {isRightPanelOpen && (
+                <div 
+                    onClick={() => setIsRightPanelOpen(false)} 
+                    className="fixed inset-0 bg-black/60 z-40 xl:hidden backdrop-blur-sm transition-opacity" 
+                />
+            )}
+
+            {/* Right Panel Wrapper */}
+            <div className={`fixed inset-y-0 right-0 z-50 transform transition-transform duration-300 ease-in-out xl:relative xl:transform-none xl:translate-x-0 ${isRightPanelOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+                <RightPanel />
+            </div>
         </div>
     );
 };
 
 export default Dashboard;
+
+
