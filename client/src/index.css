@@ -1,0 +1,73 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter', sans-serif;
+
+  /* Refined High-Contrast Dark Theme */
+  --color-background: #0F172A;  /* Richer, darker blue-grey (Slate-950) */
+  --color-surface: #1E293B;     /* Lighter slate for cards (Slate-800) */
+  --color-surface-hover: #334155; /* Slightly lighter for hover states */
+  
+  --color-primary: #FFD60A;     /* Vivid Yellow (accessible on dark) */
+  --color-primary-dark: #EAB308; /* Darker yellow/gold */
+  --color-primary-light: #FEF08A; /* Pale yellow */
+
+  /* Text Colors - High Contrast */
+  --color-text-main: #F8FAFC;    /* Almost white (Slate-50) */
+  --color-text-secondary: #CBD5E1; /* Light grey (Slate-300) - increased contrast */
+  --color-text-muted: #94A3B8;     /* Muted grey (Slate-400) - readable */
+
+  --color-border: #334155;       /* Subtle border (Slate-700) */
+
+  --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -2px rgba(0, 0, 0, 0.5);
+  --shadow-card: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.5);
+  --shadow-float: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 15px rgba(255, 214, 10, 0.15); /* Yellow glow */
+}
+
+@layer base {
+  body {
+    @apply bg-background text-text-main font-sans antialiased;
+  }
+}
+
+@layer components {
+    .btn-primary {
+        @apply bg-primary text-slate-900 px-6 py-3 rounded-2xl font-bold shadow-lg shadow-yellow-500/20 hover:shadow-yellow-500/40 hover:bg-[#FFDE33] active:scale-95 transition-all duration-200;
+    }
+    
+    .card {
+        @apply bg-surface rounded-2xl shadow-card border border-border/50 p-6 hover:border-primary/30 transition-all duration-300;
+    }
+
+    .input-field {
+        @apply w-full bg-background border border-border rounded-xl px-4 py-3 text-text-main placeholder-text-muted focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all;
+    }
+
+    .sidebar-link {
+        @apply flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 font-medium text-text-muted hover:text-text-main hover:bg-white/5;
+    }
+
+    .sidebar-link-active {
+        @apply bg-primary text-slate-900 shadow-glow font-bold hover:bg-primary hover:text-slate-900;
+    }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-muted);
+}
