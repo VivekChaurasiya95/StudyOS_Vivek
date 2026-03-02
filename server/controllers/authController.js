@@ -1,4 +1,9 @@
 const User = require("../models/User");
+const UserStat = require("../models/UserStat");
+const Subject = require("../models/Subject");
+const Task = require("../models/Task");
+const Event = require("../models/Event");
+const Note = require("../models/Note");
 const jwt = require("jsonwebtoken");
 
 // Generate JWT Helper
@@ -45,6 +50,248 @@ exports.registerUser = async (req, res) => {
     });
 
     if (user) {
+      // Initialize basic stats and dummy content
+      await UserStat.create({
+        user: user._id,
+        focusScore: 85,
+        currentStreak: 7,
+        studyHours: 42.5,
+        tasksDone: 18,
+      });
+
+      await Subject.create([
+        {
+          user: user._id,
+          name: "Advanced Mathematics",
+          icon: "📐",
+          color: "from-indigo-500 to-purple-500",
+          bgLight: "bg-indigo-500/10",
+          textColor: "text-indigo-400",
+          borderColor: "border-indigo-500/20",
+          progress: 60,
+          totalChapters: 12,
+          completedChapters: 7,
+          totalTasks: 24,
+          completedTasks: 14,
+          studyHours: 18.5,
+          lastStudied: "2 hours ago",
+          status: "in-progress",
+          chapters: [
+            { name: "Linear Algebra", progress: 100, tasks: 3, completed: 3 },
+            { name: "Calculus I", progress: 100, tasks: 2, completed: 2 },
+            { name: "Calculus II", progress: 80, tasks: 3, completed: 2 },
+            {
+              name: "Differential Equations",
+              progress: 45,
+              tasks: 4,
+              completed: 2,
+            },
+            {
+              name: "Probability & Statistics",
+              progress: 20,
+              tasks: 3,
+              completed: 1,
+            },
+            { name: "Number Theory", progress: 0, tasks: 2, completed: 0 },
+          ],
+        },
+        {
+          user: user._id,
+          name: "Physics - Quantum Mechanics",
+          icon: "⚛️",
+          color: "from-cyan-500 to-blue-500",
+          bgLight: "bg-cyan-500/10",
+          textColor: "text-cyan-400",
+          borderColor: "border-cyan-500/20",
+          progress: 30,
+          totalChapters: 10,
+          completedChapters: 3,
+          totalTasks: 20,
+          completedTasks: 6,
+          studyHours: 12.0,
+          lastStudied: "1 day ago",
+          status: "in-progress",
+          chapters: [
+            {
+              name: "Wave-Particle Duality",
+              progress: 100,
+              tasks: 2,
+              completed: 2,
+            },
+            {
+              name: "Schrödinger Equation",
+              progress: 100,
+              tasks: 3,
+              completed: 3,
+            },
+            { name: "Quantum States", progress: 60, tasks: 3, completed: 1 },
+            { name: "Wave Motion", progress: 10, tasks: 4, completed: 0 },
+            {
+              name: "Quantum Entanglement",
+              progress: 0,
+              tasks: 2,
+              completed: 0,
+            },
+          ],
+        },
+        {
+          user: user._id,
+          name: "Organic Chemistry",
+          icon: "🧪",
+          color: "from-emerald-500 to-green-500",
+          bgLight: "bg-emerald-500/10",
+          textColor: "text-emerald-400",
+          borderColor: "border-emerald-500/20",
+          progress: 15,
+          totalChapters: 14,
+          completedChapters: 2,
+          totalTasks: 28,
+          completedTasks: 4,
+          studyHours: 8.0,
+          lastStudied: "3 days ago",
+          status: "needs-attention",
+          chapters: [
+            { name: "Hydrocarbons", progress: 100, tasks: 2, completed: 2 },
+            { name: "Functional Groups", progress: 50, tasks: 3, completed: 2 },
+            { name: "Stereochemistry", progress: 10, tasks: 3, completed: 0 },
+            {
+              name: "Reaction Mechanisms",
+              progress: 0,
+              tasks: 4,
+              completed: 0,
+            },
+          ],
+        },
+        {
+          user: user._id,
+          name: "Data Structures & Algorithms",
+          icon: "💻",
+          color: "from-orange-500 to-amber-500",
+          bgLight: "bg-orange-500/10",
+          textColor: "text-orange-400",
+          borderColor: "border-orange-500/20",
+          progress: 85,
+          totalChapters: 8,
+          completedChapters: 7,
+          totalTasks: 16,
+          completedTasks: 14,
+          studyHours: 32.0,
+          lastStudied: "5 hours ago",
+          status: "almost-done",
+          chapters: [
+            { name: "Arrays & Strings", progress: 100, tasks: 2, completed: 2 },
+            { name: "Linked Lists", progress: 100, tasks: 2, completed: 2 },
+            { name: "Trees & Graphs", progress: 100, tasks: 3, completed: 3 },
+            {
+              name: "Dynamic Programming",
+              progress: 80,
+              tasks: 3,
+              completed: 2,
+            },
+            {
+              name: "Sorting & Searching",
+              progress: 100,
+              tasks: 2,
+              completed: 2,
+            },
+            { name: "Advanced Graphs", progress: 40, tasks: 2, completed: 1 },
+          ],
+        },
+      ]);
+
+      await Task.create([
+        {
+          user: user._id,
+          title: "Research Paper Outline",
+          description: "Structure the thesis statement...",
+          status: "todo",
+        },
+        { user: user._id, title: "Lab Report Drafting", status: "todo" },
+        {
+          user: user._id,
+          title: "Algorithm Finalization",
+          status: "inProgress",
+          progress: 65,
+        },
+        { user: user._id, title: "Literature Review", status: "completed" },
+      ]);
+
+      await Event.create([
+        {
+          user: user._id,
+          title: "Physics: Wave Motion",
+          type: "Quiz",
+          date: new Date(Date.now() + 86400000),
+        },
+        {
+          user: user._id,
+          title: "Math Midterm Exam",
+          type: "Exam",
+          date: new Date(Date.now() + 5 * 86400000),
+        },
+        {
+          user: user._id,
+          title: "Chemistry Lab Report",
+          type: "Assignment",
+          date: new Date(Date.now() + 3 * 86400000),
+        },
+        {
+          user: user._id,
+          title: "DSA Project Submission",
+          type: "Assignment",
+          date: new Date(Date.now() + 7 * 86400000),
+        },
+      ]);
+
+      await Note.create([
+        {
+          user: user._id,
+          category: "Study",
+          label: "Study Prep",
+          title: "Physics Exam Revision",
+          type: "checklist",
+          items: [
+            { text: "Review Chapter 4 notes", done: true },
+            { text: "Complete practice set A", done: true },
+            { text: "Derive Maxwell equations", done: false },
+            { text: "Lab report submission", done: false },
+          ],
+          color: "emerald",
+        },
+        {
+          user: user._id,
+          category: "Work",
+          label: "Work",
+          title: "Design System Audit",
+          type: "bullets",
+          items: [
+            "Check accessibility contrast for the mint green primary color",
+            "Update icon set to Material Round",
+            "Verify dark mode border tokens",
+          ],
+          color: "purple",
+        },
+        {
+          user: user._id,
+          category: "Personal",
+          label: "Quick Thought",
+          title: "Project Idea: Focus API",
+          type: "text",
+          body: "Build a lightweight Chrome extension that syncs study sessions directly with the ChronOS dashboard. Should include a simple pomodoro timer and site blocker.",
+          color: "amber",
+        },
+        {
+          user: user._id,
+          category: "Study",
+          label: "Motivation",
+          type: "quote",
+          body: '"Success is not final, failure is not fatal: it is the courage to continue that counts."',
+          author: "— Winston Churchill",
+          pinned: true,
+          color: "emerald",
+        },
+      ]);
+
       const token = generateToken(user._id);
 
       res.cookie("jwt", token, {

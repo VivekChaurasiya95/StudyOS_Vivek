@@ -1,262 +1,568 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-    Settings, User, Edit3, LogOut,
-    Moon, Bell,
-    Linkedin, Github,
-    Sparkles, TrendingUp, Target,
-    X, Clock
-} from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+  Settings,
+  User,
+  Edit3,
+  LogOut,
+  Moon,
+  Sun,
+  Bell,
+  Clock,
+  Square,
+  Calendar,
+  Maximize,
+  Minimize,
+  Zap,
+  CheckCircle2,
+  TrendingUp,
+  ChevronRight,
+} from "lucide-react";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useThemeStore } from "../store/themeStore";
+import { useFocusStore } from "../store/focusStore";
+import PdfToolModal, { pdfTools } from "./PdfTools";
+import axios from "axios";
 
 // --- Circular Progress Ring -------------------------------------------------
-const ProgressRing = ({ progress = 0, size = 56, strokeWidth = 4, color = '#6366F1' }) => {
-    const radius = (size - strokeWidth) / 2;
-    const circumference = 2 * Math.PI * radius;
-    const offset = circumference - (progress / 100) * circumference;
+const ProgressRing = ({
+  progress = 0,
+  size = 44,
+  strokeWidth = 4,
+  color = "#10B981",
+}) => {
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (progress / 100) * circumference;
 
-    return (
-        <svg width={size} height={size} className='progress-ring -rotate-90'>
-            <circle
-                cx={size / 2} cy={size / 2} r={radius}
-                fill='none' stroke='currentColor'
-                strokeWidth={strokeWidth}
-                className='text-white/10'
-            />
-            <circle
-                cx={size / 2} cy={size / 2} r={radius}
-                fill='none' stroke={color}
-                strokeWidth={strokeWidth}
-                strokeLinecap='round'
-                strokeDasharray={circumference}
-                strokeDashoffset={offset}
-                className='progress-ring-circle transition-all duration-1000 ease-out'
-            />
-            <text
-                x={size / 2} y={size / 2}
-                textAnchor='middle' dominantBaseline='central'
-                className='fill-current text-text-main font-bold rotate-90 origin-center text-xs'
-                style={{ fontSize: size * 0.25 }}
-            >
-                {progress}%
-            </text>
-        </svg>
-    );
+  return (
+    <svg width={size} height={size} className="-rotate-90">
+      <circle
+        cx={size / 2}
+        cy={size / 2}
+        r={radius}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={strokeWidth}
+        className="text-white/10"
+      />
+      <circle
+        cx={size / 2}
+        cy={size / 2}
+        r={radius}
+        fill="none"
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeDasharray={circumference}
+        strokeDashoffset={offset}
+        className="transition-all duration-1000 ease-out"
+      />
+    </svg>
+  );
 };
 
 // --- Main Right Panel -------------------------------------------------------
 const RightPanel = () => {
-    const { user, logout } = useAuth();
-    const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const { isDarkMode, toggleDarkMode } = useThemeStore();
 
-    // -- State ------------------------------------------------------------
-    const [isOpen, setIsOpen] = useState(true);
-    const [showSettingsMenu, setShowSettingsMenu] = useState(false);
+  // -- State ---------------------------------------------------------------
+  const [isOpen, setIsOpen] = useState(true);
+  const [showSettingsMenu, setShowSettingsMenu] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [activeTool, setActiveTool] = useState(null);
 
-    useEffect(() => {
-        document.body.classList.toggle('right-panel-closed', !isOpen);
-        return () => document.body.classList.remove('right-panel-closed');
-    }, [isOpen]);
-    const [profileHover, setProfileHover] = useState(false);
-    const [focusActive, setFocusActive] = useState(true);
-    const [sessionSeconds, setSessionSeconds] = useState(0);
+  // Real stats from dashboard API
+  const [stats, setStats] = useState({
+    studyHours: 0,
+    todayHours: 0,
+    tasksDone: 0,
+    totalTasks: 0,
+    pendingTasks: 0,
+    currentStreak: 0,
+    focusScore: 0,
+  });
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
 
-    // -- Live Timer -------------------------------------------------------
-    useEffect(() => {
-        let interval;
-        if (focusActive) {
-            interval = setInterval(() => {
-                setSessionSeconds(s => s + 1);
-            }, 1000);
-        }
-        return () => clearInterval(interval);
-    }, [focusActive]);
+  useEffect(() => {
+    document.body.classList.toggle("right-panel-closed", !isOpen);
+    return () => document.body.classList.remove("right-panel-closed");
+  }, [isOpen]);
 
-    const formatTime = (totalSec) => {
-        const h = Math.floor(totalSec / 3600);
-        const m = Math.floor((totalSec % 3600) / 60);
-        const s = totalSec % 60;
-        return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-    };
+  // Focus session from shared store
+  const {
+    isActive: focusActive,
+    isPaused: focusPaused,
+    elapsed: sessionSeconds,
+    toggle: toggleFocus,
+    stop: stopFocus,
+    hydrate: hydrateFocus,
+  } = useFocusStore();
 
-    const handleLogout = () => {
-        logout();
-        navigate('/');
-    };
+  // Hydrate focus + fetch real stats on mount
+  useEffect(() => {
+    hydrateFocus();
+    fetchStats();
+  }, []);
 
-    // -- Mock Data --------------------------------------------------------
-    const productivityScore = 78;
-    const activeGoal = 'Complete Physics Ch.4';
-    const scoreStatus = productivityScore >= 75 ? 'green' : productivityScore >= 50 ? 'yellow' : 'red';
+  // Listen for fullscreen changes
+  useEffect(() => {
+    const handler = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener("fullscreenchange", handler);
+    return () => document.removeEventListener("fullscreenchange", handler);
+  }, []);
 
-    const statusColors = {
-        green: { bg: 'bg-emerald-500/10', text: 'text-emerald-400', border: 'border-emerald-500/20', label: 'On Track' },
-        yellow: { bg: 'bg-amber-500/10', text: 'text-amber-400', border: 'border-amber-500/20', label: 'Needs Focus' },
-        red: { bg: 'bg-red-500/10', text: 'text-red-400', border: 'border-red-500/20', label: 'Behind' },
-    };
+  const fetchStats = async () => {
+    try {
+      const { data } = await axios.get("http://localhost:5000/api/dashboard", {
+        withCredentials: true,
+      });
+      setStats({
+        studyHours: data.stats?.studyHours || 0,
+        todayHours: data.stats?.todayHours || 0,
+        tasksDone: data.stats?.tasksDone || 0,
+        totalTasks: data.totalTasks || 0,
+        pendingTasks: data.pendingTasks || 0,
+        currentStreak: data.stats?.currentStreak || 0,
+        focusScore: data.stats?.focusScore || 0,
+      });
+      setUpcomingEvents(data.upcomingEvents || []);
+    } catch (err) {
+      // silently fail — panel still works without stats
+    }
+  };
 
-    const status = statusColors[scoreStatus];
+  const formatTime = (totalSec) => {
+    const h = Math.floor(totalSec / 3600);
+    const m = Math.floor((totalSec % 3600) / 60);
+    const s = totalSec % 60;
+    return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+  };
 
-    return (
-        <>
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
+
+  const toggleFullscreen = useCallback(() => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen().catch(() => {});
+    }
+  }, []);
+
+  // Task completion percentage
+  const taskPercent =
+    stats.totalTasks > 0
+      ? Math.round((stats.tasksDone / stats.totalTasks) * 100)
+      : 0;
+
+  return (
+    <>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className={`fixed top-1/2 -translate-y-1/2 z-[60] bg-surface w-8 h-16 flex items-center justify-center rounded-l-2xl shadow-[0_4px_14px_rgba(0,0,0,0.05)] border border-border border-r-0 transition-all duration-300 ${isOpen ? "right-80" : "right-0"}`}
+        title="Toggle Panel"
+      >
+        <div
+          className={`w-1 h-8 rounded-full bg-border transition-all duration-300 ${isOpen ? "" : "bg-primary"}`}
+        />
+      </button>
+      <aside
+        className={`bg-surface h-full flex flex-col gap-5 py-6 z-40 border-l border-border overflow-y-auto overflow-x-hidden custom-scrollbar transition-all duration-300 ease-in-out ${isOpen ? "w-80 px-5 opacity-100" : "w-0 px-0 border-none opacity-0"}`}
+      >
+        {/* ── 1. User Profile & Settings ── */}
+        <div className="flex justify-between items-start">
+          <div className="flex items-center gap-3 cursor-pointer group">
+            <div className="relative w-11 h-11">
+              <div className="w-11 h-11 bg-primary/10 rounded-xl flex items-center justify-center text-primary text-base font-bold shadow-inner group-hover:scale-105 transition-transform duration-300">
+                {user?.username ? user.username[0].toUpperCase() : "A"}
+              </div>
+              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-surface" />
+            </div>
+            <div>
+              <h3 className="font-bold text-sm text-text-main leading-tight group-hover:text-primary transition-colors">
+                {user?.username || "User"}
+              </h3>
+              <p className="text-[11px] text-text-secondary font-medium">
+                {user?.email || "Pro Member"}
+              </p>
+            </div>
+          </div>
+
+          <div className="relative">
             <button
-                onClick={() => setIsOpen(!isOpen)}
-                className={`fixed top-1/2 -translate-y-1/2 z-[60] bg-surface w-8 h-16 flex items-center justify-center rounded-l-2xl shadow-[0_4px_14px_rgba(0,0,0,0.05)] border border-border border-r-0 transition-all duration-300 ${isOpen ? 'right-80' : 'right-0'}`}
-                title="Toggle Panel"
+              onClick={() => setShowSettingsMenu(!showSettingsMenu)}
+              className={`p-2 rounded-lg transition-all duration-200 ${showSettingsMenu ? "bg-primary text-slate-900 shadow-glow" : "text-text-muted hover:bg-surface-hover hover:text-text-main"}`}
             >
-                <div className={`w-1 h-8 rounded-full bg-border transition-all duration-300 ${isOpen ? '' : 'bg-primary'}`} />
+              <Settings
+                size={18}
+                className={showSettingsMenu ? "animate-spin-slow" : ""}
+              />
             </button>
-            <aside className={`bg-surface h-full flex flex-col gap-8 py-6 z-40 border-l border-border overflow-y-auto overflow-x-hidden custom-scrollbar transition-all duration-300 ease-in-out ${isOpen ? 'w-80 px-6 opacity-100' : 'w-0 px-0 border-none opacity-0'}`}>
-            
-            {/* -- 1. User Profile & Settings Header -- */}
-            <div className='flex justify-between items-start'>
-                <div 
-                    className='flex items-center gap-4 cursor-pointer group'
-                    onMouseEnter={() => setProfileHover(true)}
-                    onMouseLeave={() => setProfileHover(false)}
+
+            <AnimatePresence>
+              {showSettingsMenu && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                  className="absolute right-0 top-10 w-48 bg-surface rounded-xl shadow-lg border border-border p-1.5 z-50 origin-top-right text-text-muted divide-y divide-border/50"
                 >
-                    <div className='relative w-12 h-12'>
-                        <div className='w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary text-lg font-bold shadow-inner group-hover:scale-105 transition-transform duration-300'>
-                             {user?.username ? user.username[0].toUpperCase() : 'A'}
-                        </div>
-                        <div className='absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-surface'></div>
-                    </div>
-                    <div>
-                         <h3 className='font-bold text-sm text-text-main leading-tight group-hover:text-primary transition-colors'>
-                            {user?.username || 'Arin Gupta'}
-                         </h3>
-                         <p className='text-xs text-text-secondary font-medium'>Pro Member</p>
-                    </div>
-                </div>
-
-                <div className='relative'>
-                    <button 
-                        onClick={() => setShowSettingsMenu(!showSettingsMenu)}
-                        className={`p-2 rounded-lg transition-all duration-200 ${showSettingsMenu ? 'bg-primary text-slate-900 shadow-glow' : 'text-text-muted hover:bg-surface-hover hover:text-text-main'}`}
-                    >
-                        <Settings size={20} className={showSettingsMenu ? 'animate-spin-slow' : ''} />
+                  <div className="space-y-0.5 p-1">
+                    <button className="w-full flex items-center gap-3 px-3 py-2 text-xs font-medium hover:bg-surface-hover hover:text-text-main rounded-lg transition-colors group">
+                      <User
+                        size={14}
+                        className="group-hover:text-primary transition-colors"
+                      />{" "}
+                      Profile
                     </button>
-                    
-                    {/* Settings Dropdown */}
-                    <AnimatePresence>
-                        {showSettingsMenu && (
-                            <motion.div 
-                                initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                                animate={{ opacity: 1, scale: 1, y: 0 }}
-                                exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                                className='absolute right-0 top-10 w-48 bg-surface rounded-xl shadow-lg border border-border p-1.5 z-50 origin-top-right text-text-muted divide-y divide-border/50'
-                            >
-                                <div className='space-y-0.5 p-1'>
-                                    <button className='w-full flex items-center gap-3 px-3 py-2 text-xs font-medium hover:bg-surface-hover hover:text-text-main rounded-lg transition-colors group'>
-                                        <User size={14} className="group-hover:text-primary transition-colors" /> Profile
-                                    </button>
-                                    <button className='w-full flex items-center gap-3 px-3 py-2 text-xs font-medium hover:bg-surface-hover hover:text-text-main rounded-lg transition-colors group'>
-                                        <Edit3 size={14} className="group-hover:text-primary transition-colors" /> Edit
-                                    </button>
-                                </div>
-                                <div className='p-1'>
-                                    <button onClick={handleLogout} className='w-full flex items-center gap-3 px-3 py-2 text-xs font-medium text-red-400 hover:bg-red-500/10 rounded-lg transition-colors'>
-                                        <LogOut size={14} /> Logout
-                                    </button>
-                                </div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </div>
-            </div>
-
-            {/* -- 2. Focus Timer Card -- */}
-            <div className='card relative overflow-hidden group'>
-                <div className='absolute top-0 right-0 w-32 h-32 bg-primary-light rounded-full blur-2xl -translate-y-10 translate-x-10 pointer-events-none'></div>
-                
-                <div className='flex justify-between items-center mb-6 relative z-10'>
-                    <div className='flex items-center gap-2'>
-                        <div className={`w-2 h-2 rounded-full shadow-[0_0_8px_currentColor] ${focusActive ? 'bg-primary text-primary animate-pulse' : 'bg-red-500 text-red-500'}`}></div>
-                        <span className='text-[10px] font-bold tracking-widest uppercase text-text-muted'>Focus Session</span>
-                    </div>
-                </div>
-                
-                <div className='text-center mb-8 relative z-10'>
-                    <div className='text-5xl font-mono font-bold tracking-widest tabular-nums mb-1 text-text-main drop-shadow-lg'>
-                        {formatTime(sessionSeconds)}
-                    </div>
-                </div>
-
-                <div className='flex justify-center gap-3 relative z-10'>
-                    <button 
-                        onClick={() => setFocusActive(!focusActive)}
-                        className='w-full btn-primary'
-                    >
-                        {focusActive ? 'Pause Session' : 'Start Focus'}
+                    <button className="w-full flex items-center gap-3 px-3 py-2 text-xs font-medium hover:bg-surface-hover hover:text-text-main rounded-lg transition-colors group">
+                      <Edit3
+                        size={14}
+                        className="group-hover:text-primary transition-colors"
+                      />{" "}
+                      Edit Account
                     </button>
-                </div>
+                  </div>
+                  <div className="p-1">
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center gap-3 px-3 py-2 text-xs font-medium text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                    >
+                      <LogOut size={14} /> Logout
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        {/* ── 2. Focus Timer Card ── */}
+        <div className="card relative overflow-hidden group bg-primary/10">
+          <div className="flex justify-between items-center mb-4 relative z-10">
+            <div className="flex items-center gap-2">
+              <div
+                className={`w-2 h-2 rounded-full shadow-[0_0_8px_currentColor] ${focusActive && !focusPaused ? "bg-primary text-primary animate-pulse" : focusPaused ? "bg-amber-500 text-amber-500" : "bg-red-500 text-red-500"}`}
+              />
+              <span className="text-[10px] font-bold tracking-widest uppercase text-text-muted">
+                {focusActive
+                  ? focusPaused
+                    ? "Session Paused"
+                    : "Focus Session"
+                  : "No Session"}
+              </span>
             </div>
-            
-             {/* -- 3. Goal Progress -- */}
-             <div className='card group'>
-                <div className='flex justify-between items-center mb-4'>
-                    <h4 className='font-bold text-sm text-text-muted uppercase tracking-wider'>Daily Goal</h4>
-                    <span className={`px-2.5 py-1 rounded-md text-[10px] uppercase tracking-wider font-bold border border-transparent shadow-inner ${status.bg} ${status.text}`}>
-                        {status.label}
-                    </span>
-                </div>
-                
-                <div className='flex items-center justify-between gap-4'>
-                    <div className='relative shrink-0'>
-                        <ProgressRing progress={productivityScore} size={56} strokeWidth={5} color='#10B981' />
-                    </div>
-                    <div className='flex-1 min-w-0'>
-                        <p className='text-sm font-semibold text-text-main mb-0.5 truncate' title={activeGoal}>
-                            {activeGoal}
-                        </p>
-                        <p className='text-xs text-text-secondary'>Physics • Chapter 4</p>
-                    </div>
-                </div>
-             </div>
+          </div>
 
-             {/* -- 4. Notifications / Tools -- */}
-             <div className='space-y-3'>
-                 <h4 className='text-[10px] font-bold text-text-muted uppercase tracking-wider ml-1'>Quick Actions</h4>
-                 <div className='grid grid-cols-2 gap-3'>
-                     <button className='flex flex-col items-center gap-3 p-4 bg-surface rounded-2xl shadow-soft hover:shadow-card transition-all duration-200 group'>
-                         <div className='w-10 h-10 flex items-center justify-center bg-background shadow-inner rounded-xl group-hover:scale-110 transition-all duration-300'>
-                             <Moon size={18} className="text-text-secondary group-hover:text-primary transition-colors" />
-                         </div>
-                         <span className='text-xs font-medium text-text-secondary group-hover:text-text-main transition-colors'>Dark Mode</span>
-                     </button>
-                     <button className='flex flex-col items-center gap-3 p-4 bg-surface rounded-2xl shadow-soft hover:shadow-card transition-all duration-200 group'>
-                         <div className='w-10 h-10 flex items-center justify-center bg-background shadow-inner rounded-xl group-hover:scale-110 transition-all duration-300'>
-                             <Bell size={18} className="text-text-secondary group-hover:text-primary transition-colors" />
-                         </div>
-                         <span className='text-xs font-medium text-text-secondary group-hover:text-text-main transition-colors'>Alerts</span>
-                     </button>
-                 </div>
-             </div>
-             
-             {/* -- 5. AI Insight -- */}
-             <div className='bg-background rounded-2xl p-4 shadow-inner relative overflow-hidden group'>
-                 <div className='flex gap-2.5 mb-2'>
-                     <div className='p-1.5 bg-surface rounded-lg shadow-soft text-primary'>
-                         <Sparkles size={14} />
-                     </div>
-                     <h4 className='text-xs font-bold text-text-main pt-0.5'>AI Insight</h4>
-                 </div>
-                 <p className='text-xs text-text-secondary leading-relaxed mb-3'>
-                     Peak productivity: <span className='font-semibold text-text-main'>10-12 PM</span>.
-                 </p>
-                 <button className='w-full py-2 bg-surface rounded-xl text-[10px] font-bold text-primary shadow-soft hover:shadow-card transition-all uppercase tracking-wide'>
-                     APPLY SCHEDULE
-                 </button>
-             </div>
+          <div className="text-center mb-6 relative z-10">
+            <div className="text-5xl font-mono font-bold tracking-widest tabular-nums mb-1 text-text-main drop-shadow-lg">
+              {formatTime(sessionSeconds)}
+            </div>
+          </div>
 
-        </aside>
-        </>
-    );
+          <div className="flex gap-2 relative z-10">
+            <button onClick={toggleFocus} className="flex-1 btn-primary">
+              {!focusActive
+                ? "Start Focus"
+                : focusPaused
+                  ? "Resume Session"
+                  : "Pause Session"}
+            </button>
+            {focusActive && (
+              <button
+                onClick={stopFocus}
+                className="p-3 bg-red-500/10 text-red-400 rounded-2xl hover:bg-red-500/20 transition-colors"
+                title="End Session"
+              >
+                <Square size={18} />
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* ── 3. Today's Stats (Real Data) ── */}
+        <div className="space-y-2.5">
+          <h4 className="text-[10px] font-bold text-text-muted uppercase tracking-wider ml-1">
+            Today's Progress
+          </h4>
+          <div className="grid grid-cols-3 gap-2">
+            <div className="bg-background rounded-2xl p-3 text-center shadow-inner">
+              <div className="w-8 h-8 mx-auto mb-1.5 flex items-center justify-center bg-blue-500/10 rounded-lg">
+                <Clock size={14} className="text-blue-500" />
+              </div>
+              <p className="text-lg font-bold text-text-main leading-none">
+                {stats.todayHours}h
+              </p>
+              <p className="text-[9px] text-text-muted mt-1 font-medium">
+                Study
+              </p>
+            </div>
+            <div className="bg-background rounded-2xl p-3 text-center shadow-inner">
+              <div className="w-8 h-8 mx-auto mb-1.5 flex items-center justify-center bg-emerald-500/10 rounded-lg">
+                <CheckCircle2 size={14} className="text-emerald-500" />
+              </div>
+              <p className="text-lg font-bold text-text-main leading-none">
+                {stats.tasksDone}
+                <span className="text-xs text-text-muted font-normal">
+                  /{stats.totalTasks}
+                </span>
+              </p>
+              <p className="text-[9px] text-text-muted mt-1 font-medium">
+                Tasks
+              </p>
+            </div>
+            <div className="bg-background rounded-2xl p-3 text-center shadow-inner">
+              <div className="w-8 h-8 mx-auto mb-1.5 flex items-center justify-center bg-amber-500/10 rounded-lg">
+                <Zap size={14} className="text-amber-500" />
+              </div>
+              <p className="text-lg font-bold text-text-main leading-none">
+                {stats.currentStreak}
+              </p>
+              <p className="text-[9px] text-text-muted mt-1 font-medium">
+                Streak
+              </p>
+            </div>
+          </div>
+
+          {/* Task completion mini-bar */}
+          {stats.totalTasks > 0 && (
+            <div className="px-1">
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-[10px] text-text-muted font-medium">
+                  Task Completion
+                </span>
+                <span className="text-[10px] font-bold text-primary">
+                  {taskPercent}%
+                </span>
+              </div>
+              <div className="w-full bg-background rounded-full h-1.5 shadow-inner overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${taskPercent}%` }}
+                  transition={{ duration: 1, ease: "easeOut" }}
+                  className="bg-primary h-1.5 rounded-full"
+                />
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ── 4. PDF Tools ── */}
+        <div className="space-y-2.5">
+          <h4 className="text-[10px] font-bold text-text-muted uppercase tracking-wider ml-1">
+            PDF Tools
+          </h4>
+          <div className="grid grid-cols-2 gap-2">
+            {pdfTools.map((tool) => (
+              <button
+                key={tool.id}
+                onClick={() => setActiveTool(tool.id)}
+                title={tool.title}
+                className="flex items-center gap-2.5 p-3 bg-background rounded-xl shadow-inner hover:bg-surface hover:shadow-soft transition-all duration-200 group text-left"
+              >
+                <div
+                  className={`w-9 h-9 shrink-0 flex items-center justify-center rounded-lg ${tool.bg} ${tool.color} group-hover:scale-110 transition-transform duration-200`}
+                >
+                  <tool.icon size={16} />
+                </div>
+                <span className="text-[11px] font-semibold text-text-secondary group-hover:text-text-main transition-colors leading-tight">
+                  {tool.shortLabel}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* PDF Tool Modal */}
+        <PdfToolModal tool={activeTool} onClose={() => setActiveTool(null)} />
+
+        {/* ── 5. Quick Actions ── */}
+        <div className="space-y-2.5">
+          <h4 className="text-[10px] font-bold text-text-muted uppercase tracking-wider ml-1">
+            Quick Actions
+          </h4>
+          <div className="grid grid-cols-3 gap-2">
+            <button
+              onClick={toggleDarkMode}
+              className="flex flex-col items-center gap-2 p-3 bg-background rounded-2xl shadow-inner hover:bg-surface hover:shadow-soft transition-all duration-200 group"
+            >
+              <div className="w-9 h-9 flex items-center justify-center bg-surface rounded-xl shadow-soft group-hover:scale-110 transition-all duration-300">
+                {isDarkMode ? (
+                  <Sun size={16} className="text-amber-500" />
+                ) : (
+                  <Moon
+                    size={16}
+                    className="text-text-secondary group-hover:text-primary transition-colors"
+                  />
+                )}
+              </div>
+              <span className="text-[10px] font-medium text-text-muted group-hover:text-text-main transition-colors">
+                {isDarkMode ? "Light" : "Dark"}
+              </span>
+            </button>
+
+            <button
+              onClick={toggleFullscreen}
+              className="flex flex-col items-center gap-2 p-3 bg-background rounded-2xl shadow-inner hover:bg-surface hover:shadow-soft transition-all duration-200 group"
+            >
+              <div className="w-9 h-9 flex items-center justify-center bg-surface rounded-xl shadow-soft group-hover:scale-110 transition-all duration-300">
+                {isFullscreen ? (
+                  <Minimize
+                    size={16}
+                    className="text-text-secondary group-hover:text-primary transition-colors"
+                  />
+                ) : (
+                  <Maximize
+                    size={16}
+                    className="text-text-secondary group-hover:text-primary transition-colors"
+                  />
+                )}
+              </div>
+              <span className="text-[10px] font-medium text-text-muted group-hover:text-text-main transition-colors">
+                {isFullscreen ? "Exit" : "Full"}
+              </span>
+            </button>
+
+            <button className="flex flex-col items-center gap-2 p-3 bg-background rounded-2xl shadow-inner hover:bg-surface hover:shadow-soft transition-all duration-200 group relative">
+              <div className="w-9 h-9 flex items-center justify-center bg-surface rounded-xl shadow-soft group-hover:scale-110 transition-all duration-300">
+                <Bell
+                  size={16}
+                  className="text-text-secondary group-hover:text-primary transition-colors"
+                />
+              </div>
+              <span className="text-[10px] font-medium text-text-muted group-hover:text-text-main transition-colors">
+                Alerts
+              </span>
+              {stats.pendingTasks > 0 && (
+                <span className="absolute top-2 right-3 w-4 h-4 bg-red-500 rounded-full text-[8px] text-white font-bold flex items-center justify-center">
+                  {stats.pendingTasks > 9 ? "9+" : stats.pendingTasks}
+                </span>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* ── 6. Upcoming Events ── */}
+        <div className="space-y-2.5">
+          <div className="flex justify-between items-center ml-1 mr-1">
+            <h4 className="text-[10px] font-bold text-text-muted uppercase tracking-wider">
+              Upcoming
+            </h4>
+            <button
+              onClick={() => navigate("/calendar")}
+              className="text-[10px] font-semibold text-primary hover:text-primary-dark transition-colors"
+            >
+              View All
+            </button>
+          </div>
+
+          {upcomingEvents.length > 0 ? (
+            <div className="space-y-2">
+              {upcomingEvents.slice(0, 3).map((event, i) => (
+                <button
+                  key={event._id || i}
+                  onClick={() => navigate("/calendar")}
+                  className="w-full flex items-center gap-3 p-2.5 bg-background rounded-xl shadow-inner hover:bg-surface hover:shadow-soft transition-all text-left group"
+                >
+                  <div
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                      event.type === "Quiz"
+                        ? "bg-amber-500/10 text-amber-500"
+                        : event.type === "Exam"
+                          ? "bg-red-500/10 text-red-500"
+                          : event.type === "Assignment"
+                            ? "bg-blue-500/10 text-blue-500"
+                            : "bg-purple-500/10 text-purple-500"
+                    }`}
+                  >
+                    <Calendar size={14} />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-semibold text-text-main truncate group-hover:text-primary transition-colors">
+                      {event.title}
+                    </p>
+                    <p className="text-[10px] text-text-muted mt-0.5">
+                      {event.type} •{" "}
+                      {new Date(event.date).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </p>
+                  </div>
+                  <ChevronRight
+                    size={14}
+                    className="text-text-muted opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                  />
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-background rounded-xl p-4 shadow-inner text-center">
+              <Calendar size={20} className="mx-auto text-text-muted mb-1.5" />
+              <p className="text-[11px] text-text-muted">No upcoming events</p>
+              <button
+                onClick={() => navigate("/calendar")}
+                className="text-[10px] font-semibold text-primary mt-1 hover:underline"
+              >
+                Add Event
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* ── 7. Study Stats Summary ── */}
+        <div className="bg-background rounded-2xl p-4 shadow-inner">
+          <div className="flex justify-between items-center mb-3">
+            <div className="flex items-center gap-2">
+              <TrendingUp size={14} className="text-primary" />
+              <h4 className="text-xs font-bold text-text-main">Overview</h4>
+            </div>
+            <button
+              onClick={() => navigate("/dashboard")}
+              className="text-[10px] font-semibold text-primary hover:text-primary-dark transition-colors"
+            >
+              Details
+            </button>
+          </div>
+
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-text-secondary">
+                Total Study
+              </span>
+              <span className="text-xs font-bold text-text-main">
+                {stats.studyHours}h
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-text-secondary">
+                Focus Sessions
+              </span>
+              <span className="text-xs font-bold text-text-main">
+                {stats.focusScore}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-text-secondary">
+                Pending Tasks
+              </span>
+              <span
+                className={`text-xs font-bold ${stats.pendingTasks > 0 ? "text-amber-500" : "text-emerald-500"}`}
+              >
+                {stats.pendingTasks}
+              </span>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </>
+  );
 };
 
 export default RightPanel;
-
-
-
-

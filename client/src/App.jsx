@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -5,6 +6,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
+import { useThemeStore } from "./store/themeStore";
 import Sidebar from "./components/Sidebar";
 import RightPanel from "./components/RightPanel";
 import Login from "./pages/Login";
@@ -19,6 +21,16 @@ import DrawingPad from "./pages/DrawingPad";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
+  const { isDarkMode } = useThemeStore();
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [isDarkMode]);
+
   return (
     <AuthProvider>
       <Router>
