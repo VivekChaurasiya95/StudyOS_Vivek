@@ -104,7 +104,7 @@ function DashboardMockup() {
       <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-purple-200 rounded-full blur-none opacity-50" />
       
       {/* Main Container */}
-      <div className="bg-white rounded-3xl shadow-xl border-4 border-gray-900 overflow-hidden relative">
+      <div className="bg-white rounded-3xl shadow-xl border-4 border-text-main overflow-hidden relative">
         {/* Header */}
         <div className="bg-gray-50 border-b border-gray-200 px-4 py-3 flex items-center gap-4">
           <div className="flex gap-1.5">
@@ -113,24 +113,24 @@ function DashboardMockup() {
             <div className="w-3 h-3 rounded-full bg-green-400 border border-green-500" />
           </div>
           <div className="flex-1 max-w-sm mx-auto bg-white border border-gray-200 rounded-md h-8 flex items-center px-3 text-xs text-gray-400 font-mono">
-           studyos.app
+           mantessa.app
           </div>
         </div>
 
         {/* Browser Body */}
         <div className="p-1 flex h-[350px] bg-slate-50">
            {/* Sidebar */}
-           <div className="w-16 bg-white m-2 mr-1 rounded-2xl border border-gray-100 flex flex-col items-center py-6 gap-6 shadow-sm">
-              <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-200">
+           <div className="w-16 bg-white m-2 mr-1 rounded-2xl border border-border flex flex-col items-center py-6 gap-6 shadow-sm">
+              <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white shadow-lg shadow-emerald-200">
                 <LayoutDashboard size={20} />
               </div>
-              <div className="w-10 h-10 text-gray-400 hover:bg-gray-50 rounded-xl flex items-center justify-center transition-colors">
+              <div className="w-10 h-10 text-text-muted hover:bg-surface-hover rounded-xl flex items-center justify-center transition-colors">
                 <CheckSquare size={20} />
               </div>
-              <div className="w-10 h-10 text-gray-400 hover:bg-gray-50 rounded-xl flex items-center justify-center transition-colors">
+              <div className="w-10 h-10 text-text-muted hover:bg-surface-hover rounded-xl flex items-center justify-center transition-colors">
                  <Calendar size={20} />
               </div>
-              <div className="w-10 h-10 text-gray-400 hover:bg-gray-50 rounded-xl flex items-center justify-center transition-colors">
+              <div className="w-10 h-10 text-text-muted hover:bg-surface-hover rounded-xl flex items-center justify-center transition-colors">
                  <Brain size={20} />
               </div>
            </div>
@@ -140,51 +140,51 @@ function DashboardMockup() {
               {/* Header Area */}
               <div className="col-span-12 row-span-1 flex items-center justify-between px-2">
                  <div className="flex flex-col">
-                    <h3 className="text-xl font-bold text-gray-900">Good Morning, Alex!</h3>
-                    <p className="text-xs text-gray-500">Ready to conquer your goals?</p>
+                    <h3 className="text-xl font-bold text-text-main">Good Morning, Alex!</h3>
+                    <p className="text-xs text-text-secondary">Ready to conquer your goals?</p>
                  </div>
-                 <div className="w-8 h-8 rounded-full bg-yellow-300 border-2 border-white shadow-sm flex items-center justify-center font-bold text-xs">AK</div>
+                 <div className="w-8 h-8 rounded-full bg-emerald-300 border-2 border-white shadow-sm flex items-center justify-center font-bold text-xs">AK</div>
               </div>
 
               {/* Timer Card - Big & Bold */}
-              <div className="col-span-4 row-span-3 bg-white rounded-2xl border-2 border-gray-100 p-4 flex flex-col items-center justify-center relative overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+              <div className="col-span-4 row-span-3 bg-white rounded-2xl border-2 border-border p-4 flex flex-col items-center justify-center relative overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                  <div className="absolute top-0 left-0 w-full h-1 bg-red-500"></div>
-                 <span className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Focus Session</span>
-                 <div className="text-5xl font-black text-gray-900 tracking-tighter mb-1 font-mono">
+                 <span className="text-xs font-bold uppercase tracking-wider text-text-muted mb-2">Focus Session</span>
+                 <div className="text-5xl font-black text-text-main tracking-tighter mb-1 font-mono">
                     {minutes}:{seconds}
                  </div>
                  <span className="text-xs font-semibold px-2 py-1 bg-red-100 text-red-600 rounded-md">Deep Work</span>
               </div>
 
               {/* Stats Card */}
-              <div className="col-span-4 row-span-3 bg-indigo-600 rounded-2xl p-4 text-white shadow-lg shadow-indigo-200 flex flex-col justify-between">
+              <div className="col-span-4 row-span-3 bg-primary rounded-2xl p-4 text-white shadow-lg shadow-emerald-200 flex flex-col justify-between">
                  <div className="flex justify-between items-start">
-                    <p className="text-indigo-200 text-xs font-medium uppercase">Total Study</p>
-                    <TrendingUp size={16} className="text-indigo-200" />
+                    <p className="text-emerald-50 text-xs font-medium uppercase">Total Study</p>
+                    <TrendingUp size={16} className="text-emerald-100" />
                  </div>
                  <div>
                     <h4 className="text-4xl font-bold mb-1">4.5<span className="text-lg opacity-60">h</span></h4>
                     <p className="text-xs opacity-70">Top 5% of students today</p>
                  </div>
-                 <div className="w-full bg-indigo-500/50 h-1.5 rounded-full overflow-hidden mt-2">
+                 <div className="w-full bg-emerald-700/50 h-1.5 rounded-full overflow-hidden mt-2">
                     <div className="h-full bg-white w-[85%] rounded-full"></div>
                  </div>
               </div>
 
               {/* Tasks List */}
-              <div className="col-span-4 row-span-5 bg-white rounded-2xl border-2 border-gray-100 p-4 shadow-sm flex flex-col">
+              <div className="col-span-4 row-span-5 bg-white rounded-2xl border-2 border-border p-4 shadow-sm flex flex-col">
                  <div className="flex items-center justify-between mb-4">
-                    <span className="font-bold text-gray-900">Next Up</span>
-                    <span className="bg-gray-100 text-gray-600 text-[10px] px-2 py-1 rounded-full font-bold">3 Left</span>
+                    <span className="font-bold text-text-main">Next Up</span>
+                    <span className="bg-surface-hover text-text-secondary text-[10px] px-2 py-1 rounded-full font-bold">3 Left</span>
                  </div>
                  <div className="space-y-3 flex-1">
                     {[
                        { t: "Physics Lab Report", tag: "High", c: "bg-red-100 text-red-700" },
-                       { t: "Read Chapter 4", tag: "Med", c: "bg-yellow-100 text-yellow-700" },
+                       { t: "Read Chapter 4", tag: "Med", c: "bg-amber-100 text-amber-700" },
                        { t: "Calculus Quiz", tag: "High", c: "bg-red-100 text-red-700" },
                     ].map((item, i) => (
-                       <div key={i} className="p-3 bg-gray-50 rounded-xl border border-gray-100/50 hover:bg-white hover:border-gray-200 hover:shadow-sm transition-all cursor-pointer">
-                          <p className="text-xs font-bold text-gray-800 mb-2">{item.t}</p>
+                       <div key={i} className="p-3 bg-surface-hover rounded-xl border border-border hover:bg-white hover:border-gray-200 hover:shadow-sm transition-all cursor-pointer">
+                          <p className="text-xs font-bold text-text-main mb-2">{item.t}</p>
                           <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${item.c}`}>{item.tag}</span>
                        </div>
                     ))}
@@ -192,25 +192,25 @@ function DashboardMockup() {
               </div>
 
               {/* Bottom Quick Actions / Graph */}
-              <div className="col-span-8 row-span-2 bg-white rounded-2xl border-2 border-gray-100 p-4 flex items-center justify-between shadow-sm">
+              <div className="col-span-8 row-span-2 bg-white rounded-2xl border-2 border-border p-4 flex items-center justify-between shadow-sm">
                   <div className="flex gap-4">
                      <div className="flex flex-col">
-                        <span className="text-xs text-gray-400 font-bold uppercase">Streak</span>
+                        <span className="text-xs text-text-muted font-bold uppercase">Streak</span>
                         <div className="flex items-center gap-1">
                            <Flame size={18} className="text-orange-500 fill-orange-500" />
-                           <span className="text-xl font-black text-gray-900">12 Days</span>
+                           <span className="text-xl font-black text-text-main">12 Days</span>
                         </div>
                      </div>
-                     <div className="w-px h-10 bg-gray-100"></div>
+                     <div className="w-px h-10 bg-border"></div>
                      <div className="flex flex-col">
-                        <span className="text-xs text-gray-400 font-bold uppercase">Focus Score</span>
+                        <span className="text-xs text-text-muted font-bold uppercase">Focus Score</span>
                         <div className="flex items-center gap-1">
                            <Target size={18} className="text-emerald-500" />
-                           <span className="text-xl font-black text-gray-900">94/100</span>
+                           <span className="text-xl font-black text-text-main">94/100</span>
                         </div>
                      </div>
                   </div>
-                  <button className="bg-black text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-gray-800 transition-colors">
+                  <button className="bg-text-main text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-gray-800 transition-colors">
                      View Report
                   </button>
               </div>
@@ -304,7 +304,7 @@ export default function LandingPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] text-gray-900 font-sans selection:bg-yellow-200">
+    <div className="min-h-screen bg-background text-text-main font-sans selection:bg-emerald-200">
       
       {/* ── Navigation ─────────────────────────────────────────────────── */}
       <motion.nav
@@ -313,10 +313,8 @@ export default function LandingPage() {
       >
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-gray-900 flex items-center justify-center text-white">
-              <Brain size={20} />
-            </div>
-            <span className="text-xl font-bold tracking-tight">StudyOS</span>
+            <img src="/logo.jpeg" alt="Mantessa" className="w-10 h-10 rounded-xl object-contain shadow-lg shadow-emerald-200" />
+            <span className="text-xl font-bold tracking-tight text-text-main">Mantessa</span>
           </div>
 
           <div className="hidden md:flex items-center gap-8">
@@ -324,7 +322,7 @@ export default function LandingPage() {
               <a 
                 key={item} 
                 href={`#${item.toLowerCase()}`}
-                className="text-sm font-semibold text-gray-500 hover:text-gray-900 transition-colors"
+                className="text-sm font-semibold text-text-secondary hover:text-primary transition-colors"
               >
                 {item}
               </a>
@@ -332,12 +330,12 @@ export default function LandingPage() {
           </div>
 
           <div className="flex items-center gap-4">
-            <Link to="/login" className="text-sm font-bold text-gray-600 hover:text-gray-900">
+            <Link to="/login" className="text-sm font-bold text-text-secondary hover:text-primary">
               Log in
             </Link>
             <Link
               to="/login"
-              className="px-5 py-2.5 rounded-xl bg-gray-900 text-white text-sm font-bold hover:bg-gray-800 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-gray-200"
+              className="px-5 py-2.5 rounded-xl bg-primary text-white text-sm font-bold hover:bg-emerald-700 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-emerald-200"
             >
               Get Started
             </Link>
@@ -370,34 +368,34 @@ export default function LandingPage() {
                className="text-center lg:text-left"
             >
               <motion.div variants={fadeUp}>
-                <span className="inline-block px-3 py-1 mb-6 text-xs font-bold tracking-wider text-purple-700 uppercase bg-purple-100 rounded-full">
+                <span className="inline-block px-3 py-1 mb-6 text-xs font-bold tracking-wider text-emerald-700 uppercase bg-emerald-100 rounded-full">
                   v1.0 is now live
                 </span>
               </motion.div>
               
-              <motion.h1 variants={fadeUp} className="text-5xl lg:text-7xl font-extrabold tracking-tight text-gray-900 leading-[1.1] mb-6">
+              <motion.h1 variants={fadeUp} className="text-5xl lg:text-7xl font-extrabold tracking-tight text-text-main leading-[1.1] mb-6">
                 Master your <br/>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-500">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">
                   academic life.
                 </span>
               </motion.h1>
               
-              <motion.p variants={fadeUp} className="text-lg text-gray-600 mb-8 max-w-lg mx-auto lg:mx-0 leading-relaxed">
-                StudyOS unifies task management, scheduling, and creative tools into one powerful platform designed for high-performance students.
+              <motion.p variants={fadeUp} className="text-lg text-text-secondary mb-8 max-w-lg mx-auto lg:mx-0 leading-relaxed">
+                Mantessa unifies task management, scheduling, and creative tools into one powerful platform designed for high-performance students.
               </motion.p>
               
               <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
                 <Link
                   to="/login"
-                  className="px-8 py-4 rounded-xl bg-gray-900 text-white font-bold text-lg hover:bg-gray-800 transition-all hover:-translate-y-1 shadow-xl shadow-gray-200 w-full sm:w-auto flex items-center justify-center gap-2"
+                  className="px-8 py-4 rounded-xl bg-primary text-white font-bold text-lg hover:bg-emerald-700 transition-all hover:-translate-y-1 shadow-xl shadow-emerald-200 w-full sm:w-auto flex items-center justify-center gap-2"
                 >
                   Start for free <ArrowRight size={18} />
                 </Link>
-                <div className="flex items-center gap-4 text-sm font-semibold text-gray-500 px-4">
+                <div className="flex items-center gap-4 text-sm font-semibold text-text-secondary px-4">
                   <div className="flex -space-x-2">
-                     <div className="w-8 h-8 rounded-full border-2 border-white bg-gray-200"></div>
-                     <div className="w-8 h-8 rounded-full border-2 border-white bg-gray-300"></div>
-                     <div className="w-8 h-8 rounded-full border-2 border-white bg-gray-400"></div>
+                     <div className="w-8 h-8 rounded-full border-2 border-white bg-slate-200"></div>
+                     <div className="w-8 h-8 rounded-full border-2 border-white bg-slate-300"></div>
+                     <div className="w-8 h-8 rounded-full border-2 border-white bg-slate-400"></div>
                   </div>
                   <span>Trusted by 2,000+ students</span>
                 </div>
@@ -427,11 +425,11 @@ export default function LandingPage() {
         {/* ── Features Grid ────────────────────────────────────────────── */}
         <section id="features" className="max-w-7xl mx-auto px-6 mb-32">
           <div className="text-center mb-20">
-            <SectionLabel color="bg-blue-100 text-blue-700">Everything Included</SectionLabel>
-            <h2 className="text-4xl font-extrabold text-gray-900 mb-4">
+            <SectionLabel color="bg-emerald-100 text-emerald-700">Everything Included</SectionLabel>
+            <h2 className="text-4xl font-extrabold text-text-main mb-4">
               More than just a todo list
             </h2>
-            <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+            <p className="text-lg text-text-secondary max-w-2xl mx-auto">
               We've packed every tool you need to succeed into one cohesive operating system.
             </p>
           </div>
@@ -444,13 +442,13 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.05 }}
-                className="group p-8 rounded-3xl bg-white border border-gray-100 shadow-sm hover:shadow-xl hover:shadow-gray-200/50 hover:border-gray-200 transition-all duration-300"
+                className="group p-8 rounded-3xl bg-white border border-border shadow-sm hover:shadow-xl hover:shadow-emerald-200/50 hover:border-emerald-200 transition-all duration-300"
               >
                 <div className={`w-14 h-14 rounded-2xl ${feature.bg} ${feature.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
                   <feature.icon size={26} strokeWidth={2.5} />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">{feature.title}</h3>
-                <p className="text-gray-500 leading-relaxed">{feature.desc}</p>
+                <h3 className="text-xl font-bold text-text-main mb-3">{feature.title}</h3>
+                <p className="text-text-secondary leading-relaxed">{feature.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -458,41 +456,41 @@ export default function LandingPage() {
 
         {/* ── Big Feature Highlight 1 ──────────────────────────────────── */}
         <section className="max-w-7xl mx-auto px-6 mb-32">
-           <div className="bg-gray-900 rounded-[2.5rem] p-8 md:p-16 text-white overflow-hidden relative">
+           <div className="bg-text-main rounded-[2.5rem] p-8 md:p-16 text-white overflow-hidden relative">
               <div className="relative z-10 grid md:grid-cols-2 gap-12 items-center">
                  <div>
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white text-xs font-bold mb-6 border border-white/20">
-                       <Zap size={14} className="fill-yellow-400 text-yellow-400" />
+                       <Zap size={14} className="fill-emerald-400 text-emerald-400" />
                        <span className="uppercase tracking-wide">Focus Mode</span>
                     </div>
                     <h2 className="text-4xl md:text-5xl font-extrabold mb-6 leading-tight">
                        Deep work made <br/>
-                       <span className="text-yellow-400">effortless.</span>
+                       <span className="text-emerald-400">effortless.</span>
                     </h2>
                     <p className="text-gray-300 text-lg mb-8 leading-relaxed max-w-md">
                        Our scientifically-tuned Pomodoro timer helps you maintain flow state. Block distractions, track your streaks, and visualize your productivity patterns over time.
                     </p>
-                    <button className="bg-white text-gray-900 px-6 py-3 rounded-xl font-bold hover:bg-gray-100 transition-colors">
+                    <button className="bg-white text-text-main px-6 py-3 rounded-xl font-bold hover:bg-gray-100 transition-colors">
                        Try Focus Mode
                     </button>
                  </div>
 
                  <div className="relative">
                     {/* Abstract shapes */}
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-indigo-500/30 rounded-full blur-3xl"></div>
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-emerald-500/30 rounded-full blur-3xl"></div>
                     
                     {/* Simple UI Card Representation */}
                     <div className="bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-8 max-w-sm mx-auto shadow-2xl">
                        <div className="flex justify-between items-center mb-8">
                           <span className="text-sm font-bold opacity-60">TIMER</span>
-                          <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                        </div>
                        <div className="text-center mb-8">
                           <div className="text-7xl font-mono font-bold tracking-tighter mb-2">25:00</div>
                           <span className="text-sm font-medium bg-white/20 px-3 py-1 rounded-full">Work Session</span>
                        </div>
                        <div className="flex gap-4">
-                          <button className="flex-1 bg-white text-gray-900 py-3 rounded-lg font-bold hover:scale-105 transition-transform">Pause</button>
+                          <button className="flex-1 bg-white text-text-main py-3 rounded-lg font-bold hover:scale-105 transition-transform">Pause</button>
                           <button className="flex-1 bg-white/10 py-3 rounded-lg font-bold hover:bg-white/20 transition-colors">Stop</button>
                        </div>
                     </div>
@@ -505,48 +503,48 @@ export default function LandingPage() {
         <section id="methodology" className="max-w-7xl mx-auto px-6 mb-32">
            <div className="grid md:grid-cols-2 gap-16 items-center">
               <div>
-                 <SectionLabel color="bg-purple-100 text-purple-700">The Workflow</SectionLabel>
-                 <h2 className="text-4xl font-extrabold text-gray-900 mb-6">Designed for flow, not friction.</h2>
-                 <p className="text-lg text-gray-500 mb-10">StudyOS gets out of your way so the only thing you have to focus on is your work.</p>
+                 <SectionLabel color="bg-emerald-100 text-emerald-700">The Workflow</SectionLabel>
+                 <h2 className="text-4xl font-extrabold text-text-main mb-6">Designed for flow, not friction.</h2>
+                 <p className="text-lg text-text-secondary mb-10">Mantessa gets out of your way so the only thing you have to focus on is your work.</p>
                  
                  <div className="space-y-8">
                     {[
                        { title: "Plan", desc: "Dump all your assignments and exams into the calendar.", color: "bg-blue-500" },
-                       { title: "Focus", desc: "Pick one task, start the timer, and execute.", color: "bg-purple-500" },
-                       { title: "Review", desc: "Check your analytics and optimize your routine.", color: "bg-pink-500" }
+                       { title: "Focus", desc: "Pick one task, start the timer, and execute.", color: "bg-emerald-500" },
+                       { title: "Review", desc: "Check your analytics and optimize your routine.", color: "bg-purple-500" }
                     ].map((step, i) => (
                        <div key={i} className="flex gap-5">
                           <div className={`w-10 h-10 rounded-full ${step.color} flex items-center justify-center text-white font-bold shrink-0 shadow-lg shadow-${step.color}/20`}>
                              {i+1}
                           </div>
                           <div>
-                             <h4 className="text-xl font-bold text-gray-900 mb-2">{step.title}</h4>
-                             <p className="text-gray-500 leading-relaxed">{step.desc}</p>
+                             <h4 className="text-xl font-bold text-text-main mb-2">{step.title}</h4>
+                             <p className="text-text-secondary leading-relaxed">{step.desc}</p>
                           </div>
                        </div>
                     ))}
                  </div>
               </div>
-              <div className="bg-gray-100 rounded-[2rem] h-[500px] relative overflow-hidden">
+              <div className="bg-surface-hover rounded-[2rem] h-[500px] relative overflow-hidden text-text-muted">
                  {/* Decorative Illustration Area */}
                  <div className="absolute inset-0 flex items-center justify-center">
                     <div className="relative w-64 h-64">
                        <motion.div 
                           animate={{ rotate: 360 }}
                           transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                          className="absolute inset-0 border-2 border-dashed border-gray-300 rounded-full"
+                          className="absolute inset-0 border-2 border-dashed border-border rounded-full"
                        />
                        <motion.div 
                           animate={{ rotate: -360 }}
                           transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                          className="absolute inset-4 border-2 border-dashed border-purple-300 rounded-full"
+                          className="absolute inset-4 border-2 border-dashed border-emerald-300 rounded-full"
                        />
                        <div className="absolute inset-0 flex items-center justify-center">
-                          <Brain size={64} className="text-gray-400" />
+                          <Brain size={64} className="text-text-muted" />
                        </div>
                        {/* Orbiting elements */}
                        <div className="absolute -top-6 left-1/2 w-12 h-12 bg-white rounded-xl shadow-lg flex items-center justify-center">
-                          <CheckSquare size={20} className="text-green-500" />
+                          <CheckSquare size={20} className="text-emerald-500" />
                        </div>
                        <div className="absolute bottom-10 -right-6 w-12 h-12 bg-white rounded-xl shadow-lg flex items-center justify-center">
                           <Clock size={20} className="text-red-500" />
@@ -561,29 +559,29 @@ export default function LandingPage() {
         </section>
 
         {/* ── Testimonials ────────────────────────────────────────────── */}
-        <section id="testimonials" className="bg-gray-50 py-24 mb-24">
+        <section id="testimonials" className="bg-surface-hover py-24 mb-24">
            <div className="max-w-7xl mx-auto px-6">
               <div className="text-center mb-16">
-                 <h2 className="text-3xl font-bold text-gray-900">What students are saying</h2>
+                 <h2 className="text-3xl font-bold text-text-main">What students are saying</h2>
               </div>
               <div className="grid md:grid-cols-3 gap-8">
                  {[
-                    { text: "It's clean, it's fast, and it doesn't try to do too much. Exactly what I needed.", author: "Sarah J.", role: "Med Student", color: "bg-yellow-200" },
-                    { text: "The visualization of my study hours actually motivated me to work harder.", author: "Mike T.", role: "Engineering", color: "bg-blue-200" },
-                    { text: "Finally a productivity app that doesn't feel like a spreadsheet.", author: "Jessica L.", role: "Design", color: "bg-purple-200" },
+                    { text: "It's clean, it's fast, and it doesn't try to do too much. Exactly what I needed.", author: "Sarah J.", role: "Med Student", color: "bg-amber-100" },
+                    { text: "The visualization of my study hours actually motivated me to work harder.", author: "Mike T.", role: "Engineering", color: "bg-blue-100" },
+                    { text: "Finally a productivity app that doesn't feel like a spreadsheet.", author: "Jessica L.", role: "Design", color: "bg-purple-100" },
                  ].map((t, i) => (
-                    <div key={i} className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between h-full hover:-translate-y-1 transition-transform duration-300">
+                    <div key={i} className="bg-white p-8 rounded-2xl shadow-sm border border-border flex flex-col justify-between h-full hover:-translate-y-1 transition-transform duration-300">
                        <div className="flex gap-1 mb-6">
-                          {[1,2,3,4,5].map(s => <Star key={s} size={16} className="fill-yellow-400 text-yellow-400" />)}
+                          {[1,2,3,4,5].map(s => <Star key={s} size={16} className="fill-amber-400 text-amber-400" />)}
                        </div>
-                       <p className="text-gray-700 text-lg font-medium leading-relaxed mb-6">"{t.text}"</p>
+                       <p className="text-text-secondary text-lg font-medium leading-relaxed mb-6">"{t.text}"</p>
                        <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-full ${t.color} flex items-center justify-center font-bold text-gray-800`}>
+                          <div className={`w-10 h-10 rounded-full ${t.color} flex items-center justify-center font-bold text-text-main`}>
                              {t.author[0]}
                           </div>
                           <div>
-                             <div className="font-bold text-gray-900 text-sm">{t.author}</div>
-                             <div className="text-gray-400 text-xs">{t.role}</div>
+                             <div className="font-bold text-text-main text-sm">{t.author}</div>
+                             <div className="text-text-muted text-xs">{t.role}</div>
                           </div>
                        </div>
                     </div>
@@ -594,10 +592,10 @@ export default function LandingPage() {
 
         {/* ── Tech Stack ──────────────────────────────────────────────── */}
         <section className="max-w-4xl mx-auto px-6 mb-32 text-center">
-           <p className="font-bold text-gray-400 text-sm tracking-widest uppercase mb-8">Built with modern tech</p>
+           <p className="font-bold text-text-muted text-sm tracking-widest uppercase mb-8">Built with modern tech</p>
            <div className="flex flex-wrap justify-center gap-4">
               {stack.map((tech) => (
-                 <div key={tech.name} className={`flex items-center gap-2 px-4 py-2 rounded-full border ${tech.bg} text-sm font-semibold text-gray-700 shadow-sm`}>
+                 <div key={tech.name} className={`flex items-center gap-2 px-4 py-2 rounded-full border ${tech.bg} text-sm font-semibold text-text-secondary shadow-sm`}>
                     <span>{tech.icon}</span>
                     {tech.name}
                  </div>
@@ -607,20 +605,20 @@ export default function LandingPage() {
 
         {/* ── CTA ─────────────────────────────────────────────────────── */}
         <section className="max-w-5xl mx-auto px-6 text-center pb-20">
-           <div className="bg-gradient-to-tr from-purple-600 to-blue-600 rounded-3xl p-12 md:p-20 text-white shadow-2xl shadow-purple-200 relative overflow-hidden">
+           <div className="bg-gradient-to-tr from-emerald-600 to-teal-600 rounded-3xl p-12 md:p-20 text-white shadow-2xl shadow-emerald-200 relative overflow-hidden">
                {/* Decorative circles */}
                <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
-               <div className="absolute bottom-0 left-0 w-64 h-64 bg-yellow-400 opacity-20 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl"></div>
+               <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-400 opacity-20 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl"></div>
 
                <div className="relative z-10">
                   <h2 className="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight">Ready to upgrade your workflow?</h2>
-                  <p className="text-purple-100 text-lg mb-10 max-w-xl mx-auto">Join the new wave of productive students. No credit card required, free forever for individuals.</p>
+                  <p className="text-emerald-100 text-lg mb-10 max-w-xl mx-auto">Join the new wave of productive students. No credit card required, free forever for individuals.</p>
                   
                   <div className="flex flex-col sm:flex-row justify-center gap-4">
-                     <Link to="/login" className="px-8 py-4 bg-white text-purple-700 rounded-xl font-bold text-lg hover:shadow-lg hover:bg-gray-50 transition-all flex items-center justify-center gap-2">
+                     <Link to="/login" className="px-8 py-4 bg-white text-emerald-700 rounded-xl font-bold text-lg hover:shadow-lg hover:bg-emerald-50 transition-all flex items-center justify-center gap-2">
                         Get Started Now <Sparkles size={18} />
                      </Link>
-                     <a href="https://github.com/studyos" className="px-8 py-4 bg-purple-700/50 backdrop-blur-sm border border-purple-400/30 text-white rounded-xl font-bold text-lg hover:bg-purple-700 transition-all flex items-center justify-center gap-2">
+                     <a href="https://github.com/mantessa" className="px-8 py-4 bg-emerald-700/50 backdrop-blur-sm border border-emerald-400/30 text-white rounded-xl font-bold text-lg hover:bg-emerald-700 transition-all flex items-center justify-center gap-2">
                         View Source <Github size={18} />
                      </a>
                   </div>
@@ -631,20 +629,23 @@ export default function LandingPage() {
       </main>
 
       {/* ── Footer ────────────────────────────────────────────────────── */}
-      <footer className="bg-white border-t border-gray-100 py-12 px-6">
+      <footer className="bg-white border-t border-border py-12 px-6">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center text-white">
-                 <Brain size={16} />
-              </div>
-              <span className="font-bold text-gray-900 text-lg">StudyOS</span>
+              <img src="/logo.jpeg" alt="Mantessa" className="w-8 h-8 rounded-lg object-contain" />
+              <span className="font-bold text-text-main text-lg">Mantessa</span>
            </div>
            
-           <div className="flex gap-8 text-sm font-medium text-gray-500">
-              <a href="#" className="hover:text-gray-900">Privacy</a>
-              <a href="#" className="hover:text-gray-900">Terms</a>
-              <a href="#" className="hover:text-gray-900">Twitter</a>
-              <a href="#" className="hover:text-gray-900">GitHub</a>
+           <div className="flex gap-8 text-sm font-medium text-text-secondary">
+              <a href="#" className="hover:text-text-main">Privacy</a>
+              <a href="#" className="hover:text-text-main">Terms</a>
+              <a href="#" className="hover:text-text-main">Twitter</a>
+              <a href="#" className="hover:text-text-main">GitHub</a>
            </div>
 
-           <p className="text-sm text-gray-400">© 2026 StudyOS Inc.</p>
+           <p className="text-sm text-text-muted">© 2026 Mantessa Inc.</p>
+        </div>
+      </footer>
+    </div>
+  );
+}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Settings,
@@ -149,6 +149,20 @@ const RightPanel = ({ onClose }) => {
       // silently fail — panel still works without stats
     }
   };
+
+  // Re-fetch stats when a focus session ends
+  const prevFocusRef = useRef(focusActive);
+  useEffect(() => {
+    if (prevFocusRef.current && !focusActive) {
+      fetchStats();
+    }
+    prevFocusRef.current = focusActive;
+  }, [focusActive]);
+
+  // Live today hours including active session elapsed time
+  const liveTodayHours = focusActive
+    ? parseFloat((stats.todayHours + sessionSeconds / 3600).toFixed(1))
+    : stats.todayHours;
 
   const formatTime = (totalSec) => {
     const h = Math.floor(totalSec / 3600);
@@ -331,7 +345,7 @@ const RightPanel = ({ onClose }) => {
                 <Clock size={14} className="text-blue-500" />
               </div>
               <p className="text-lg font-bold text-text-main leading-none">
-                {stats.todayHours}h
+                {liveTodayHours}h
               </p>
               <p className="text-[9px] text-text-muted mt-1 font-medium">
                 Study

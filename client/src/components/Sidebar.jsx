@@ -93,13 +93,11 @@ const Sidebar = ({ onMobileClose }) => {
         <div
           onClick={() => handleNavigation("/dashboard")}
           className="flex items-center gap-4 cursor-pointer"
-          title="StudyOS"
+          title="Mantessa"
         >
-          <div className="w-12 h-12 shrink-0 bg-surface rounded-2xl flex items-center justify-center text-primary-dark font-bold text-xl hover:text-primary transition-all duration-300 shadow-soft hover:shadow-card">
-            S
-          </div>
+          <img src="/logo.jpeg" alt="Mantessa" className="w-12 h-12 shrink-0 rounded-2xl object-contain hover:scale-105 transition-all duration-300 shadow-soft hover:shadow-card" />
           <span className="text-xl font-bold tracking-tight text-text-main opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-            StudyOS
+            Mantessa
           </span>
         </div>
 

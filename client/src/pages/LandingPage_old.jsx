@@ -153,7 +153,7 @@ function DashboardMockup() {
           <span className="w-3 h-3 rounded-full bg-green-400" />
           <div className="flex-1 ml-3 bg-border/30 rounded-full h-5 flex items-center px-3">
             <span className="text-[10px] text-text-muted font-medium">
-              studyos.app/dashboard
+              mantessa.app/dashboard
             </span>
           </div>
         </div>
@@ -389,7 +389,7 @@ const steps = [
     step: "01",
     icon: Layers,
     title: "Organize Everything",
-    desc: "Import your tasks, subjects, and deadlines. StudyOS structures your entire semester at a glance.",
+    desc: "Import your tasks, subjects, and deadlines. Mantessa structures your entire semester at a glance.",
     color: "from-primary/20 to-emerald-200/20",
   },
   {
@@ -453,7 +453,7 @@ const testimonials = [
   {
     name: "Aria K.",
     role: "Computer Science Junior",
-    text: "StudyOS replaced 5 different apps for me. Everything I need for a productive study session is right there.",
+    text: "Mantessa replaced 5 different apps for me. Everything I need for a productive study session is right there.",
     avatar: "AK",
   },
   {
@@ -600,7 +600,7 @@ export default function LandingPage() {
             transition={{ duration: 0.6, delay: 0.25 }}
             className="max-w-2xl mx-auto text-lg md:text-xl text-text-secondary leading-relaxed mb-10"
           >
-            StudyOS unifies task management, scheduling, and creative tools into
+            Mantessa unifies task management, scheduling, and creative tools into
             one powerful platform for students and lifelong learners.
           </motion.p>
 
@@ -908,7 +908,7 @@ export default function LandingPage() {
               Three Steps to Peak Performance
             </h2>
             <p className="max-w-xl mx-auto text-text-secondary text-lg">
-              No complex onboarding. No friction. Just open StudyOS and start
+              No complex onboarding. No friction. Just open Mantessa and start
               producing.
             </p>
           </AnimateWhenVisible>
@@ -1057,7 +1057,7 @@ export default function LandingPage() {
               </h2>
               <p className="text-text-secondary text-lg mb-10 max-w-lg mx-auto">
                 Join thousands of students who have transformed their academic
-                life with StudyOS.
+                life with Mantessa.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link
@@ -1163,7 +1163,7 @@ export default function LandingPage() {
 
           <div className="pt-8 border-t border-border/40 flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-text-muted text-sm">
-              © 2026 StudyOS. Built with ❤️ for students everywhere.
+              © 2026 Mantessa. Built with ❤️ for students everywhere.
             </p>
             <div className="flex items-center gap-5">
               {[

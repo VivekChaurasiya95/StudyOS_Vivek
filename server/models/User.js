@@ -22,6 +22,13 @@ const UserSchema = new mongoose.Schema({
         required: true,
         minlength: 6
     },
+    socialLinks: {
+        linkedin: { type: String, default: '' },
+        github: { type: String, default: '' },
+        reddit: { type: String, default: '' },
+        discord: { type: String, default: '' },
+        quora: { type: String, default: '' },
+    },
     createdAt: {
         type: Date,
         default: Date.now

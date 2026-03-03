@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Sidebar from "../components/Sidebar";
 import RightPanel from "../components/RightPanel";
 import {
@@ -40,6 +40,7 @@ const Dashboard = () => {
 
   const {
     isActive: focusIsActive,
+    elapsed: focusElapsed,
     start: startFocus,
     hydrate,
   } = useFocusStore();
@@ -63,21 +64,21 @@ const Dashboard = () => {
   });
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:5000/api/dashboard",
-          { withCredentials: true },
-        );
-        setDashboardData(response.data);
-      } catch (error) {
-        console.error("Error fetching dashboard data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchDashboardData = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:5000/api/dashboard",
+        { withCredentials: true },
+      );
+      setDashboardData(response.data);
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
+  useEffect(() => {
     if (user) {
       fetchDashboardData();
       hydrate(); // sync focus session state from server
@@ -86,6 +87,24 @@ const Dashboard = () => {
       setLoading(false);
     }
   }, [user]);
+
+  // Re-fetch dashboard data when a focus session ends
+  const prevFocusRef = useRef(focusIsActive);
+  useEffect(() => {
+    if (prevFocusRef.current && !focusIsActive && user) {
+      fetchDashboardData();
+    }
+    prevFocusRef.current = focusIsActive;
+  }, [focusIsActive]);
+
+  // Live study hours including the active session's elapsed time
+  const liveStudyHours = focusIsActive
+    ? parseFloat(((dashboardData.stats.studyHours || 0) + focusElapsed / 3600).toFixed(1))
+    : dashboardData.stats.studyHours;
+
+  const liveTodayHours = focusIsActive
+    ? parseFloat(((dashboardData.stats.todayHours || 0) + focusElapsed / 3600).toFixed(1))
+    : dashboardData.stats.todayHours;
 
   const handleStartSession = async () => {
     if (!focusIsActive) {
@@ -123,10 +142,8 @@ const Dashboard = () => {
               <Menu size={24} />
             </button>
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary/20 rounded-lg flex items-center justify-center text-primary font-bold">
-                S
-              </div>
-              <span className="font-bold text-lg text-text-main">StudyOS</span>
+              <img src="/logo.jpeg" alt="Mantessa" className="w-8 h-8 rounded-lg object-contain" />
+              <span className="font-bold text-lg text-text-main">Mantessa</span>
             </div>
             <button
               onClick={() => setIsRightPanelOpen(true)}
@@ -239,13 +256,13 @@ const Dashboard = () => {
           {[
             {
               label: "Study Hours",
-              value: `${dashboardData.stats.studyHours}h`,
+              value: `${liveStudyHours}h`,
               icon: Clock,
               color: "text-blue-500",
               bg: "bg-blue-100",
               trend:
-                dashboardData.stats.todayHours > 0
-                  ? `+${dashboardData.stats.todayHours}h today`
+                liveTodayHours > 0
+                  ? `+${liveTodayHours}h today`
                   : "Start studying",
             },
             {

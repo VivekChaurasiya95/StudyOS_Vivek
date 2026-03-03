@@ -56,7 +56,7 @@ const Login = () => {
             state={formData.email || formData.password ? "typing" : "idle"}
           />
           <h3 className="mt-6 text-2xl font-bold text-text-main text-center">
-            {isLogin ? "Welcome Back!" : "Join StudyOS"}
+            {isLogin ? "Welcome Back!" : "Join Mantessa"}
           </h3>
           <p className="mt-2 text-text-secondary text-center text-sm leading-relaxed">
             {isLogin
@@ -136,7 +136,7 @@ const Login = () => {
           </form>
 
           <div className="mt-8 text-center text-sm text-text-secondary">
-            {isLogin ? "New to StudyOS? " : "Already have an account? "}
+            {isLogin ? "New to Mantessa? " : "Already have an account? "}
             <button
               onClick={() => setIsLogin(!isLogin)}
               className="text-primary font-semibold hover:underline"

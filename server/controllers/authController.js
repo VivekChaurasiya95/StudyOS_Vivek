@@ -372,3 +372,35 @@ exports.logoutUser = (req, res) => {
   });
   res.status(200).json({ message: "Logged out successfully" });
 };
+
+// @desc    Update user social links
+// @route   PUT /api/auth/social-links
+// @access  Private
+exports.updateSocialLinks = async (req, res) => {
+  try {
+    const { linkedin, github, reddit, discord, quora } = req.body;
+
+    // Validate that at least one link is provided
+    const links = { linkedin, github, reddit, discord, quora };
+    const hasAtLeastOne = Object.values(links).some((v) => v && v.trim() !== '');
+    if (!hasAtLeastOne) {
+      return res.status(400).json({ message: 'Please provide at least one social link' });
+    }
+
+    // Clean up links — trim whitespace
+    const cleaned = {};
+    for (const [key, val] of Object.entries(links)) {
+      cleaned[key] = val ? val.trim() : '';
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { socialLinks: cleaned },
+      { new: true }
+    ).select('-password');
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+};

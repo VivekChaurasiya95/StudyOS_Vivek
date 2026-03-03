@@ -479,10 +479,8 @@ const StickyNotes = () => {
               <Menu size={24} />
             </button>
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary/20 rounded-lg flex items-center justify-center text-primary font-bold">
-                S
-              </div>
-              <span className="font-bold text-lg text-text-main">StudyOS</span>
+              <img src="/logo.jpeg" alt="Mantessa" className="w-8 h-8 rounded-lg object-contain" />
+              <span className="font-bold text-lg text-text-main">Mantessa</span>
             </div>
             <button
               onClick={() => setIsRightPanelOpen(true)}

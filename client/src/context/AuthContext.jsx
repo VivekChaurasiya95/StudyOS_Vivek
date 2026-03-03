@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const checkUser = async () => {
             // Check for the "Logged In" hint to avoid 401 errors in console for guests
-            const authHint = localStorage.getItem('studyos_logged_in');
+            const authHint = localStorage.getItem('mantessa_logged_in');
 
             if (!authHint) {
                 setLoading(false);
@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
                 setUser(data);
             } catch (error) {
                 if (error.response?.status === 401) {
-                    localStorage.removeItem('studyos_logged_in');
+                    localStorage.removeItem('mantessa_logged_in');
                 } else {
                     console.error('Initial auth check failed:', error);
                 }
@@ -38,21 +38,21 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, password) => {
         const { data } = await axios.post('/api/auth/login', { email, password });
-        localStorage.setItem('studyos_logged_in', 'true');
+        localStorage.setItem('mantessa_logged_in', 'true');
         setUser(data);
         return data;
     };
 
     const register = async (username, email, password) => {
         const { data } = await axios.post('/api/auth/register', { username, email, password });
-        localStorage.setItem('studyos_logged_in', 'true');
+        localStorage.setItem('mantessa_logged_in', 'true');
         setUser(data);
         return data;
     };
 
     const logout = async () => {
         await axios.post('/api/auth/logout');
-        localStorage.removeItem('studyos_logged_in');
+        localStorage.removeItem('mantessa_logged_in');
         setUser(null);
     };
 
