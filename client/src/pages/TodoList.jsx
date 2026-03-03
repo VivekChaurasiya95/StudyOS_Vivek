@@ -369,7 +369,7 @@ const Column = ({ columnId, tasks, moveTask, deleteTask, onAdd }) => {
   const EmptyIcon = cfg.emptyIcon;
 
   return (
-    <div className="min-w-[310px] w-[310px] flex-shrink-0 flex flex-col">
+    <div className="min-w-[280px] w-[280px] sm:min-w-[310px] sm:w-[310px] flex-shrink-0 flex flex-col">
       {/* Column header */}
       <div
         className={`flex items-center justify-between mb-4 px-3 py-2.5 rounded-xl ${cfg.headerBg}`}

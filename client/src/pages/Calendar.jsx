@@ -755,11 +755,11 @@ const CalendarPage = () => {
           </header>
 
           {/* Calendar Container */}
-          <div className="bg-surface rounded-3xl p-6 md:p-8 shadow-card border border-border/50 w-full mb-8">
+          <div className="bg-surface rounded-2xl sm:rounded-3xl p-3 sm:p-6 md:p-8 shadow-card border border-border/50 w-full mb-8">
             {/* Toolbar */}
             <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
               <div className="flex items-center gap-3 flex-wrap">
-                <h1 className="text-2xl font-bold text-text-main">
+                <h1 className="text-lg sm:text-2xl font-bold text-text-main">
                   {getTitle()}
                 </h1>
                 <div className="flex items-center gap-1 bg-background p-1 rounded-xl shadow-inner border border-transparent text-text-secondary">
@@ -802,7 +802,7 @@ const CalendarPage = () => {
                   <button
                     key={v}
                     onClick={() => setView(v)}
-                    className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ${view === v ? "bg-surface text-primary shadow-soft" : "text-text-secondary hover:text-text-main"}`}
+                    className={`px-3 sm:px-6 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-300 ${view === v ? "bg-surface text-primary shadow-soft" : "text-text-secondary hover:text-text-main"}`}
                   >
                     {v}
                   </button>
@@ -945,7 +945,7 @@ const CalendarPage = () => {
                   {WEEKDAYS.map((day) => (
                     <div
                       key={day}
-                      className="text-center text-xs font-bold text-text-muted tracking-widest uppercase pb-2"
+                      className="text-center text-[10px] sm:text-xs font-bold text-text-muted tracking-wider sm:tracking-widest uppercase pb-2"
                     >
                       {day}
                     </div>
@@ -960,12 +960,12 @@ const CalendarPage = () => {
                       <div
                         key={idx}
                         onClick={() => openDayOverlay(day.date)}
-                        className={`min-h-[110px] lg:min-h-[130px] p-2 md:p-3 relative bg-surface hover:bg-primary/5 transition-all cursor-pointer group
+                        className={`min-h-[80px] sm:min-h-[110px] lg:min-h-[130px] p-1 sm:p-2 md:p-3 relative bg-surface hover:bg-primary/5 transition-all cursor-pointer group
                           ${!isCurrent ? "bg-background/30 opacity-60" : ""}`}
                       >
                         <div className="flex justify-between items-start mb-1">
                           <span
-                            className={`w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold transition-all
+                            className={`w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center rounded-full text-xs sm:text-sm font-bold transition-all
                             ${isToday ? "bg-primary text-white shadow-md scale-110" : isCurrent ? "text-text-main group-hover:text-primary" : "text-text-muted"}`}
                           >
                             {day.num}
@@ -981,7 +981,18 @@ const CalendarPage = () => {
                             </div>
                           )}
                         </div>
-                        <div className="space-y-1 mt-1">
+                        {/* Mobile: colored dots */}
+                        {day.events.length > 0 && (
+                          <div className="flex gap-1 mt-1 sm:hidden flex-wrap justify-center">
+                            {day.events.slice(0, 4).map((ev, i) => (
+                              <span
+                                key={i}
+                                className={`w-2 h-2 rounded-full ${ev.type === "exam" ? "bg-red-500" : ev.type === "assignment" ? "bg-amber-500" : ev.type === "class" ? "bg-blue-500" : ev.type === "study" ? "bg-green-500" : "bg-purple-500"}`}
+                              />
+                            ))}
+                          </div>
+                        )}
+                        <div className="space-y-1 mt-1 hidden sm:block">
                           {day.events.slice(0, 3).map((ev, eventIdx) => (
                             <div
                               key={eventIdx}
@@ -1014,62 +1025,67 @@ const CalendarPage = () => {
 
             {/* ────── WEEK VIEW ────── */}
             {!loading && !searchQuery.trim() && view === "Week" && (
-              <div className="grid grid-cols-7 gap-3">
-                {weekDays.map((day, idx) => {
-                  const isToday = day.active;
-                  return (
-                    <div
-                      key={idx}
-                      onClick={() => openDayOverlay(day.date)}
-                      className={`rounded-2xl border transition-all cursor-pointer hover:shadow-soft ${isToday ? "border-primary/40 bg-primary/5" : "border-border/50 bg-background/50 hover:bg-surface"}`}
-                    >
+              <div className="overflow-x-auto -mx-2 px-2">
+                <div className="grid grid-cols-7 gap-2 sm:gap-3 min-w-[700px]">
+                  {weekDays.map((day, idx) => {
+                    const isToday = day.active;
+                    return (
                       <div
-                        className={`text-center py-3 rounded-t-2xl border-b ${isToday ? "bg-primary text-white border-primary" : "bg-surface border-border/30"}`}
+                        key={idx}
+                        onClick={() => openDayOverlay(day.date)}
+                        className={`rounded-2xl border transition-all cursor-pointer hover:shadow-soft ${isToday ? "border-primary/40 bg-primary/5" : "border-border/50 bg-background/50 hover:bg-surface"}`}
                       >
-                        <div className="text-xs font-bold tracking-wider uppercase opacity-80">
-                          {day.dayName}
-                        </div>
                         <div
-                          className={`text-2xl font-bold mt-1 ${isToday ? "" : "text-text-main"}`}
+                          className={`text-center py-2 sm:py-3 rounded-t-2xl border-b ${isToday ? "bg-primary text-white border-primary" : "bg-surface border-border/30"}`}
                         >
-                          {day.num}
-                        </div>
-                        <div
-                          className={`text-xs mt-0.5 ${isToday ? "opacity-80" : "text-text-muted"}`}
-                        >
-                          {day.fullDate}
-                        </div>
-                      </div>
-                      <div className="p-3 space-y-2 min-h-[200px]">
-                        {day.events.length === 0 && (
-                          <p className="text-xs text-text-muted text-center mt-8 opacity-60">
-                            No events
-                          </p>
-                        )}
-                        {day.events.map((ev, i) => (
-                          <div
-                            key={i}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              openEventDetail(ev);
-                            }}
-                            className={`px-3 py-2 text-xs font-semibold rounded-xl border shadow-sm hover:shadow-md transition-all cursor-pointer ${typeColor[ev.type] || "bg-purple-100 text-purple-700 border-purple-200"}`}
-                          >
-                            {ev.time && (
-                              <div className="opacity-70 text-[10px] mb-0.5">
-                                {ev.time}
-                              </div>
-                            )}
-                            <div className="truncate">{ev.title}</div>
-                            {ev.reminder && (
-                              <BellRing size={10} className="mt-1 opacity-60" />
-                            )}
+                          <div className="text-[10px] sm:text-xs font-bold tracking-wider uppercase opacity-80">
+                            {day.dayName}
                           </div>
-                        ))}
+                          <div
+                            className={`text-xl sm:text-2xl font-bold mt-1 ${isToday ? "" : "text-text-main"}`}
+                          >
+                            {day.num}
+                          </div>
+                          <div
+                            className={`text-[10px] sm:text-xs mt-0.5 ${isToday ? "opacity-80" : "text-text-muted"}`}
+                          >
+                            {day.fullDate}
+                          </div>
+                        </div>
+                        <div className="p-2 sm:p-3 space-y-2 min-h-[140px] sm:min-h-[200px]">
+                          {day.events.length === 0 && (
+                            <p className="text-xs text-text-muted text-center mt-8 opacity-60">
+                              No events
+                            </p>
+                          )}
+                          {day.events.map((ev, i) => (
+                            <div
+                              key={i}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openEventDetail(ev);
+                              }}
+                              className={`px-3 py-2 text-xs font-semibold rounded-xl border shadow-sm hover:shadow-md transition-all cursor-pointer ${typeColor[ev.type] || "bg-purple-100 text-purple-700 border-purple-200"}`}
+                            >
+                              {ev.time && (
+                                <div className="opacity-70 text-[10px] mb-0.5">
+                                  {ev.time}
+                                </div>
+                              )}
+                              <div className="truncate">{ev.title}</div>
+                              {ev.reminder && (
+                                <BellRing
+                                  size={10}
+                                  className="mt-1 opacity-60"
+                                />
+                              )}
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             )}
 

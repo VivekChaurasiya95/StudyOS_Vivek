@@ -87,7 +87,7 @@ const Sidebar = ({ onMobileClose }) => {
   const currentPath = window.location.pathname;
 
   return (
-    <aside className="w-20 md:hover:w-64 bg-surface h-full flex flex-col justify-between py-6 z-50 overflow-hidden custom-scrollbar shadow-card transition-all duration-300 ease-in-out group border-r border-border">
+    <aside className="w-64 md:w-20 md:hover:w-64 bg-surface h-full flex flex-col justify-between py-6 z-50 overflow-hidden custom-scrollbar shadow-card transition-all duration-300 ease-in-out group border-r border-border">
       {/* Logo Area */}
       <div className="flex flex-col gap-6 w-full px-4">
         <div
@@ -98,7 +98,7 @@ const Sidebar = ({ onMobileClose }) => {
           <div className="w-12 h-12 shrink-0 bg-surface rounded-2xl flex items-center justify-center text-primary-dark font-bold text-xl hover:text-primary transition-all duration-300 shadow-soft hover:shadow-card">
             S
           </div>
-          <span className="text-xl font-bold tracking-tight text-text-main opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+          <span className="text-xl font-bold tracking-tight text-text-main opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
             StudyOS
           </span>
         </div>
@@ -132,7 +132,7 @@ const Sidebar = ({ onMobileClose }) => {
                 </div>
                 <span
                   className={
-                    "text-sm font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 " +
+                    "text-sm font-medium whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 " +
                     (isActive ? "text-primary" : "text-text-secondary")
                   }
                 >
@@ -186,7 +186,7 @@ const Sidebar = ({ onMobileClose }) => {
               {taskPercent}%
             </div>
           </div>
-          <div className="flex flex-col items-start justify-center ml-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+          <div className="flex flex-col items-start justify-center ml-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
             <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">
               Daily Goal
             </span>
@@ -208,7 +208,7 @@ const Sidebar = ({ onMobileClose }) => {
           <div className="w-12 h-12 shrink-0 flex items-center justify-center">
             <LogOut size={18} strokeWidth={2} />
           </div>
-          <span className="text-sm font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <span className="text-sm font-medium whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
             Logout
           </span>
         </button>

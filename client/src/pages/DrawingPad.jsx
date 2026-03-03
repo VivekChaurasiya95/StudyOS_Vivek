@@ -525,7 +525,7 @@ const DrawingPad = () => {
         {/* ── Top Floating Toolbar ── */}
         <div
           ref={toolPanelRef}
-          className="absolute top-6 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-2"
+          className="absolute top-16 md:top-6 left-1/2 -translate-x-1/2 z-30 md:z-40 flex flex-col items-center gap-2"
         >
           <div className="flex bg-surface p-2 rounded-full shadow-card border border-border/50 items-center gap-2 overflow-x-auto max-w-[90vw] custom-scrollbar">
             {/* Tools */}

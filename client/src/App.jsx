@@ -20,6 +20,7 @@ import TodoList from "./pages/TodoList";
 import DrawingPad from "./pages/DrawingPad";
 import SharedNotebook from "./pages/SharedNotebook";
 import ProtectedRoute from "./components/ProtectedRoute";
+import LandingPage from "./pages/LandingPage";
 
 function App() {
   const { isDarkMode } = useThemeStore();
@@ -36,6 +37,7 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
+          <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/shared/:id" element={<SharedNotebook />} />
 
@@ -48,7 +50,6 @@ function App() {
             <Route path="/notes" element={<Notepad />} />
             <Route path="/todos" element={<TodoList />} />
             <Route path="/drawing-pad" element={<DrawingPad />} />
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/login" replace />} />

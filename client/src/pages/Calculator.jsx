@@ -295,7 +295,7 @@ const Calculator = () => {
       {/* Main Content Area Wrapper */}
       <div className="flex-1 flex flex-col md:ml-20 xl:mr-80 min-h-screen relative transition-all duration-300 z-10">
         {/* Main Content */}
-        <main className="flex-1 p-6 md:p-8 overflow-y-auto w-full max-w-[1400px] mx-auto space-y-8">
+        <main className="flex-1 p-4 sm:p-6 md:p-8 overflow-y-auto w-full max-w-[1400px] mx-auto space-y-6 sm:space-y-8">
           {/* Header */}
           <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div className="flex items-center gap-4">
@@ -354,21 +354,21 @@ const Calculator = () => {
                 <div className="text-lg text-text-secondary tracking-widest font-medium mt-10 md:mt-0 h-8 flex items-end break-all text-right">
                   {expression || lastExpression}
                 </div>
-                <div className="text-5xl md:text-6xl font-bold text-text-main mt-2 tracking-tight overflow-hidden break-all max-w-full">
+                <div className="text-3xl sm:text-5xl md:text-6xl font-bold text-text-main mt-2 tracking-tight overflow-hidden break-all max-w-full">
                   {result}
                 </div>
               </div>
 
               {/* Number Pad Grid */}
               <div
-                className={`grid gap-3 md:gap-4 w-full flex-1 ${scientificMode ? "grid-cols-4 md:grid-cols-6" : "grid-cols-4"}`}
+                className={`grid gap-2 sm:gap-3 md:gap-4 w-full flex-1 ${scientificMode ? "grid-cols-4 md:grid-cols-6" : "grid-cols-4"}`}
               >
                 {buttons.map((btn, idx) => (
                   <button
                     key={idx}
                     onClick={() => handleButtonClick(btn)}
                     className={`
-                          py-3 md:py-5 lg:py-6 rounded-2xl flex items-center justify-center transition-all duration-200 active:scale-95 shadow-sm
+                          py-2.5 sm:py-3 md:py-5 lg:py-6 rounded-2xl flex items-center justify-center transition-all duration-200 active:scale-95 shadow-sm text-sm sm:text-base
                           ${btn.color || "bg-background hover:bg-border/50 text-text-main"}
                           ${btn.classes ? btn.classes : "col-span-1"}
                         `}
