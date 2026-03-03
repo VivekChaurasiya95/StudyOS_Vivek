@@ -18,6 +18,7 @@ import StickyNotes from "./pages/StickyNotes";
 import Notepad from "./pages/Notepad";
 import TodoList from "./pages/TodoList";
 import DrawingPad from "./pages/DrawingPad";
+import SharedNotebook from "./pages/SharedNotebook";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/shared/:id" element={<SharedNotebook />} />
 
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />

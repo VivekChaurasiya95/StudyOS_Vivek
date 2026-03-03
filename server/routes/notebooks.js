@@ -8,15 +8,19 @@ const {
   createNotebook,
   updateNotebook,
   deleteNotebook,
+  bulkDeleteNotebooks,
+  deleteAllNotebooks,
   getSharedNotebook,
   updateSharedNotebook,
   toggleShare,
 } = require("../controllers/notebookController");
 
 router.get("/", protect, getNotebooks);
+router.post("/bulk-delete", protect, bulkDeleteNotebooks);
+router.delete("/all", protect, deleteAllNotebooks);
 router.get("/chapter", protect, getByChapter);
-router.get("/shared/:id", protect, getSharedNotebook);
-router.put("/shared/:id", protect, updateSharedNotebook);
+router.get("/shared/:id", getSharedNotebook);
+router.put("/shared/:id", updateSharedNotebook);
 router.get("/:id", protect, getNotebook);
 router.post("/", protect, createNotebook);
 router.put("/:id/share", protect, toggleShare);

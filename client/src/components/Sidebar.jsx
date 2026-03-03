@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Calendar,
   Calculator,
@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Sidebar = ({ onMobileClose }) => {
   const { logout } = useAuth();
@@ -19,6 +20,54 @@ const Sidebar = ({ onMobileClose }) => {
     navigate(path);
     if (onMobileClose) onMobileClose();
   };
+
+  // --- Fetch real task stats ---
+  const [taskPercent, setTaskPercent] = useState(0);
+  const [statusLabel, setStatusLabel] = useState("No Tasks");
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const { data } = await axios.get(
+          "http://localhost:5000/api/dashboard",
+          {
+            withCredentials: true,
+          },
+        );
+        const total = data.totalTasks || 0;
+        const done = data.completedTasks || 0;
+        const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+        setTaskPercent(pct);
+
+        if (total === 0) setStatusLabel("No Tasks");
+        else if (pct === 100) setStatusLabel("Complete!");
+        else if (pct >= 80) setStatusLabel("On Track");
+        else if (pct >= 60) setStatusLabel("Almost There");
+        else if (pct >= 30) setStatusLabel("In Progress");
+        else if (pct > 0) setStatusLabel("Getting Started");
+        else setStatusLabel("Not Started");
+      } catch {
+        // silently fail
+      }
+    };
+    fetchStats();
+    const interval = setInterval(fetchStats, 30000); // refresh every 30s
+    return () => clearInterval(interval);
+  }, []);
+
+  // SVG ring calculations
+  const circumference = 2 * Math.PI * 12; // r=12
+  const dashOffset = circumference - (taskPercent / 100) * circumference;
+  const ringColor =
+    taskPercent === 0
+      ? "#6B7280"
+      : taskPercent < 30
+        ? "#EF4444"
+        : taskPercent < 60
+          ? "#F59E0B"
+          : taskPercent < 80
+            ? "#3B82F6"
+            : "#10B981";
 
   const handleLogout = () => {
     logout();
@@ -102,8 +151,9 @@ const Sidebar = ({ onMobileClose }) => {
       <div className="flex flex-col gap-5 w-full px-4 overflow-hidden">
         {/* Circular Daily Goal */}
         <div
-          className="relative cursor-pointer w-full h-12 flex items-center bg-background rounded-[14px] shadow-inner"
-          title="Daily Goal: 80%"
+          className="relative cursor-pointer w-full h-12 flex items-center bg-background rounded-[14px] shadow-inner hover:bg-surface-hover transition-colors duration-200"
+          title={`Daily Goal: ${taskPercent}%`}
+          onClick={() => handleNavigation("/todos")}
         >
           <div className="w-12 h-12 shrink-0 flex items-center justify-center relative">
             <svg width="32" height="32" className="rotate-[-90deg]">
@@ -112,31 +162,40 @@ const Sidebar = ({ onMobileClose }) => {
                 cy="16"
                 r="12"
                 fill="none"
-                stroke="transparent"
+                stroke="currentColor"
                 strokeWidth="3"
+                className="text-white/10"
               />
               <circle
                 cx="16"
                 cy="16"
                 r="12"
                 fill="none"
-                stroke="#10B981"
+                stroke={ringColor}
                 strokeWidth="3"
                 strokeLinecap="round"
-                strokeDasharray="75.4"
-                strokeDashoffset="15.08"
+                strokeDasharray={circumference}
+                strokeDashoffset={dashOffset}
                 className="drop-shadow-md transition-all duration-1000 ease-out"
               />
             </svg>
-            <div className="absolute inset-0 flex items-center justify-center text-primary font-bold text-[8px] tracking-tighter">
-              80%
+            <div
+              className="absolute inset-0 flex items-center justify-center font-bold text-[8px] tracking-tighter"
+              style={{ color: ringColor }}
+            >
+              {taskPercent}%
             </div>
           </div>
           <div className="flex flex-col items-start justify-center ml-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
             <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">
               Daily Goal
             </span>
-            <span className="text-xs font-semibold text-primary">On Track</span>
+            <span
+              className="text-xs font-semibold"
+              style={{ color: ringColor }}
+            >
+              {statusLabel}
+            </span>
           </div>
         </div>
 

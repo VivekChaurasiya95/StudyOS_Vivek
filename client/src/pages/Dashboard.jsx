@@ -14,12 +14,15 @@ import {
   Calendar,
   Play,
   Loader2,
+  Sparkles,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useFocusStore } from "../store/focusStore";
+import { useNudgeStore } from "../store/nudgeStore";
+import NudgesPanel from "../components/NudgesPanel";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -27,6 +30,13 @@ const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(false);
+
+  const {
+    toggleOpen: toggleNudges,
+    getCount: getNudgeCount,
+    refresh: refreshNudges,
+  } = useNudgeStore();
+  const nudgeCount = getNudgeCount();
 
   const {
     isActive: focusIsActive,
@@ -71,6 +81,7 @@ const Dashboard = () => {
     if (user) {
       fetchDashboardData();
       hydrate(); // sync focus session state from server
+      refreshNudges();
     } else {
       setLoading(false);
     }
@@ -140,9 +151,16 @@ const Dashboard = () => {
           </div>
 
           <div className="hidden md:flex items-center gap-8">
-            <button className="relative p-3 bg-surface rounded-xl text-text-secondary hover:text-primary hover:bg-white/5 hover:shadow-soft transition-all duration-200 border border-transparent hover:border-border/50">
-              <Bell size={22} />
-              <span className="absolute top-2 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-surface"></span>
+            <button
+              onClick={toggleNudges}
+              className="relative p-3 bg-surface rounded-xl text-text-secondary hover:text-primary hover:bg-white/5 hover:shadow-soft transition-all duration-200 border border-transparent hover:border-border/50"
+            >
+              <Sparkles size={22} />
+              {nudgeCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-white text-[10px] flex items-center justify-center font-bold border-2 border-surface">
+                  {nudgeCount > 9 ? "9+" : nudgeCount}
+                </span>
+              )}
             </button>
 
             <div className="flex items-center gap-4 pl-8 border-l border-border/60">
@@ -453,6 +471,9 @@ const Dashboard = () => {
       >
         <RightPanel />
       </div>
+
+      {/* Nudges Panel */}
+      <NudgesPanel />
     </div>
   );
 };

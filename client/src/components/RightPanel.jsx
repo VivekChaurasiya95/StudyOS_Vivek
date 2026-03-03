@@ -17,12 +17,15 @@ import {
   CheckCircle2,
   TrendingUp,
   ChevronRight,
+  Sparkles,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useThemeStore } from "../store/themeStore";
 import { useFocusStore } from "../store/focusStore";
+import { useNudgeStore } from "../store/nudgeStore";
 import PdfToolModal, { pdfTools } from "./PdfTools";
+import NudgesPanel from "./NudgesPanel";
 import axios from "axios";
 
 // --- Circular Progress Ring -------------------------------------------------
@@ -113,6 +116,18 @@ const RightPanel = () => {
     const handler = () => setIsFullscreen(!!document.fullscreenElement);
     document.addEventListener("fullscreenchange", handler);
     return () => document.removeEventListener("fullscreenchange", handler);
+  }, []);
+
+  // Nudge store
+  const {
+    toggleOpen: toggleNudges,
+    getCount: getNudgeCount,
+    refresh: refreshNudges,
+  } = useNudgeStore();
+  const nudgeCount = getNudgeCount();
+
+  useEffect(() => {
+    refreshNudges();
   }, []);
 
   const fetchStats = async () => {
@@ -244,46 +259,52 @@ const RightPanel = () => {
         </div>
 
         {/* ── 2. Focus Timer Card ── */}
-        <div className="card relative overflow-hidden group bg-primary/10">
-          <div className="flex justify-between items-center mb-4 relative z-10">
-            <div className="flex items-center gap-2">
-              <div
-                className={`w-2 h-2 rounded-full shadow-[0_0_8px_currentColor] ${focusActive && !focusPaused ? "bg-primary text-primary animate-pulse" : focusPaused ? "bg-amber-500 text-amber-500" : "bg-red-500 text-red-500"}`}
-              />
+        <div
+          className="card relative overflow-hidden bg-primary/10 cursor-pointer transition-all duration-300"
+          onClick={() => !focusActive && toggleFocus()}
+        >
+          {/* State 1: Collapsed — just "Focus Session" label */}
+          {!focusActive && (
+            <div className="flex items-center gap-2 relative z-10">
+              <div className="w-2 h-2 rounded-full bg-primary text-primary shadow-[0_0_8px_currentColor]" />
               <span className="text-[10px] font-bold tracking-widest uppercase text-text-muted">
-                {focusActive
-                  ? focusPaused
-                    ? "Session Paused"
-                    : "Focus Session"
-                  : "No Session"}
+                Focus Session
               </span>
             </div>
-          </div>
+          )}
 
-          <div className="text-center mb-6 relative z-10">
-            <div className="text-5xl font-mono font-bold tracking-widest tabular-nums mb-1 text-text-main drop-shadow-lg">
-              {formatTime(sessionSeconds)}
-            </div>
-          </div>
+          {/* State 2: Expanded — timer + controls (visible when session is active) */}
+          {focusActive && (
+            <>
+              <div className="flex items-center gap-2 mb-4 relative z-10">
+                <div
+                  className={`w-2 h-2 rounded-full shadow-[0_0_8px_currentColor] ${!focusPaused ? "bg-primary text-primary animate-pulse" : "bg-amber-500 text-amber-500"}`}
+                />
+                <span className="text-[10px] font-bold tracking-widest uppercase text-text-muted">
+                  {focusPaused ? "Session Paused" : "Focus Session"}
+                </span>
+              </div>
 
-          <div className="flex gap-2 relative z-10">
-            <button onClick={toggleFocus} className="flex-1 btn-primary">
-              {!focusActive
-                ? "Start Focus"
-                : focusPaused
-                  ? "Resume Session"
-                  : "Pause Session"}
-            </button>
-            {focusActive && (
-              <button
-                onClick={stopFocus}
-                className="p-3 bg-red-500/10 text-red-400 rounded-2xl hover:bg-red-500/20 transition-colors"
-                title="End Session"
-              >
-                <Square size={18} />
-              </button>
-            )}
-          </div>
+              <div className="text-center mb-4 relative z-10">
+                <div className="text-4xl font-mono font-bold tracking-widest tabular-nums text-text-main drop-shadow-lg">
+                  {formatTime(sessionSeconds)}
+                </div>
+              </div>
+
+              <div className="flex gap-2 relative z-10">
+                <button onClick={toggleFocus} className="flex-1 btn-primary">
+                  {focusPaused ? "Resume" : "Pause"}
+                </button>
+                <button
+                  onClick={stopFocus}
+                  className="p-3 bg-red-500/10 text-red-400 rounded-2xl hover:bg-red-500/20 transition-colors"
+                  title="End Session"
+                >
+                  <Square size={18} />
+                </button>
+              </div>
+            </>
+          )}
         </div>
 
         {/* ── 3. Today's Stats (Real Data) ── */}
@@ -429,19 +450,22 @@ const RightPanel = () => {
               </span>
             </button>
 
-            <button className="flex flex-col items-center gap-2 p-3 bg-background rounded-2xl shadow-inner hover:bg-surface hover:shadow-soft transition-all duration-200 group relative">
+            <button
+              onClick={toggleNudges}
+              className="flex flex-col items-center gap-2 p-3 bg-background rounded-2xl shadow-inner hover:bg-surface hover:shadow-soft transition-all duration-200 group relative"
+            >
               <div className="w-9 h-9 flex items-center justify-center bg-surface rounded-xl shadow-soft group-hover:scale-110 transition-all duration-300">
-                <Bell
+                <Sparkles
                   size={16}
                   className="text-text-secondary group-hover:text-primary transition-colors"
                 />
               </div>
               <span className="text-[10px] font-medium text-text-muted group-hover:text-text-main transition-colors">
-                Alerts
+                Nudges
               </span>
-              {stats.pendingTasks > 0 && (
+              {nudgeCount > 0 && (
                 <span className="absolute top-2 right-3 w-4 h-4 bg-red-500 rounded-full text-[8px] text-white font-bold flex items-center justify-center">
-                  {stats.pendingTasks > 9 ? "9+" : stats.pendingTasks}
+                  {nudgeCount > 9 ? "9+" : nudgeCount}
                 </span>
               )}
             </button>
@@ -561,6 +585,9 @@ const RightPanel = () => {
           </div>
         </div>
       </aside>
+
+      {/* Nudges Panel */}
+      <NudgesPanel />
     </>
   );
 };

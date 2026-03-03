@@ -26,9 +26,12 @@ import {
   Tag,
   FileText,
   Loader2,
+  Sparkles,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useThemeStore } from "../store/themeStore";
+import { useNudgeStore } from "../store/nudgeStore";
+import NudgesPanel from "../components/NudgesPanel";
 
 const API = "http://localhost:5000/api/notes";
 const axiosCfg = { withCredentials: true };
@@ -151,6 +154,14 @@ const StickyNotes = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(false);
+
+  const {
+    toggleOpen: toggleNudges,
+    getCount: getNudgeCount,
+    refresh: refreshNudges,
+  } = useNudgeStore();
+  const nudgeCount = getNudgeCount();
+
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newNote, setNewNote] = useState({
@@ -181,6 +192,7 @@ const StickyNotes = () => {
       }
     };
     fetchNotes();
+    refreshNudges();
   }, []);
 
   // Add subtask to new note (modal)
@@ -497,9 +509,16 @@ const StickyNotes = () => {
 
           {/* right controls */}
           <div className="hidden md:flex items-center gap-8">
-            <button className="relative p-3 bg-surface rounded-xl text-text-secondary hover:text-primary hover:shadow-soft transition-all duration-200 border border-transparent hover:border-border/50">
-              <Bell size={22} />
-              <span className="absolute top-2 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-surface" />
+            <button
+              onClick={toggleNudges}
+              className="relative p-3 bg-surface rounded-xl text-text-secondary hover:text-primary hover:shadow-soft transition-all duration-200 border border-transparent hover:border-border/50"
+            >
+              <Sparkles size={22} />
+              {nudgeCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-white text-[10px] flex items-center justify-center font-bold border-2 border-surface">
+                  {nudgeCount > 9 ? "9+" : nudgeCount}
+                </span>
+              )}
             </button>
             <div className="flex items-center gap-4 pl-8 border-l border-border/60">
               <div className="text-right hidden lg:block">
@@ -1124,6 +1143,9 @@ const StickyNotes = () => {
       >
         <Plus size={24} />
       </button>
+
+      {/* Nudges Panel */}
+      <NudgesPanel />
     </div>
   );
 };

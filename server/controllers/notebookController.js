@@ -186,6 +186,35 @@ exports.updateNotebook = async (req, res) => {
   }
 };
 
+// @desc   Bulk delete notebooks
+// @route  POST /api/notebooks/bulk-delete
+exports.bulkDeleteNotebooks = async (req, res) => {
+  try {
+    const { ids } = req.body;
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ message: "No notebook IDs provided" });
+    }
+    const result = await Notebook.deleteMany({
+      _id: { $in: ids },
+      user: req.user._id,
+    });
+    res.json({ message: `${result.deletedCount} notebook(s) deleted`, deletedCount: result.deletedCount });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+// @desc   Delete all notebooks for user
+// @route  DELETE /api/notebooks/all
+exports.deleteAllNotebooks = async (req, res) => {
+  try {
+    const result = await Notebook.deleteMany({ user: req.user._id });
+    res.json({ message: `${result.deletedCount} notebook(s) deleted`, deletedCount: result.deletedCount });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
 // @desc   Delete a notebook
 // @route  DELETE /api/notebooks/:id
 exports.deleteNotebook = async (req, res) => {

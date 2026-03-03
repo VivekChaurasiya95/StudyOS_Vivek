@@ -20,8 +20,11 @@ import {
   AlertCircle,
   Settings,
   Filter,
+  Sparkles,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { useNudgeStore } from "../store/nudgeStore";
+import NudgesPanel from "../components/NudgesPanel";
 
 const API = "http://localhost:5000/api/events";
 const axiosCfg = { withCredentials: true };
@@ -212,6 +215,11 @@ const CalendarPage = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const notifRef = useRef(null);
 
+  // Nudges
+  const toggleNudges = useNudgeStore((s) => s.toggleOpen);
+  const nudgeCount = useNudgeStore((s) => s.getCount());
+  const refreshNudges = useNudgeStore((s) => s.refresh);
+
   // New event form
   const [newEvent, setNewEvent] = useState({
     title: "",
@@ -256,6 +264,7 @@ const CalendarPage = () => {
       }
     };
     fetchEvents();
+    refreshNudges();
   }, []);
 
   // ─── Save global reminder settings ───────────────────────────────
@@ -609,13 +618,13 @@ const CalendarPage = () => {
               </button>
               <div className="relative" ref={notifRef}>
                 <button
-                  onClick={() => setShowNotifications(!showNotifications)}
+                  onClick={toggleNudges}
                   className="relative p-3 bg-surface rounded-xl text-text-secondary hover:text-primary hover:shadow-soft transition-all duration-200 border border-transparent hover:border-border/50"
                 >
-                  <Bell size={22} />
-                  {events.filter((e) => e.reminder).length > 0 && (
-                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-white text-xs flex items-center justify-center font-bold">
-                      {events.filter((e) => e.reminder).length}
+                  <Sparkles size={22} />
+                  {nudgeCount > 0 && (
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 rounded-full text-white text-xs flex items-center justify-center font-bold">
+                      {nudgeCount}
                     </span>
                   )}
                 </button>
@@ -2141,6 +2150,8 @@ const CalendarPage = () => {
       >
         <RightPanel />
       </div>
+
+      <NudgesPanel />
     </div>
   );
 };

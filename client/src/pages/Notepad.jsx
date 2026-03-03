@@ -39,6 +39,9 @@ import {
   Search,
   Calendar,
   Unlink,
+  CheckSquare,
+  Square,
+  Trash,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -157,6 +160,12 @@ const Notepad = () => {
   const [allTasks, setAllTasks] = useState([]);
   const [linkedTaskIds, setLinkedTaskIds] = useState([]);
   const [toast, setToast] = useState("");
+
+  /* multi-select notebooks */
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedNbIds, setSelectedNbIds] = useState(new Set());
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteAllMode, setDeleteAllMode] = useState(false);
 
   /* refs */
   const saveTimer = useRef(null);
@@ -669,7 +678,7 @@ const Notepad = () => {
         {},
         axiosCfg,
       );
-      const shareUrl = `${window.location.origin}/notes?id=${nbRef.current._id}`;
+      const shareUrl = `${window.location.origin}/shared/${nbRef.current._id}`;
       setShareLink(shareUrl);
       setShowShareModal(true);
     } catch {
@@ -847,6 +856,75 @@ const Notepad = () => {
     fetchAllNotebooks(); // refresh sidebar list
   };
 
+  /* ─── multi-select & bulk delete ─── */
+  const toggleSelectionMode = () => {
+    setSelectionMode((p) => !p);
+    setSelectedNbIds(new Set());
+  };
+
+  const toggleSelectNb = (id) => {
+    setSelectedNbIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const selectAllNbs = () => {
+    if (selectedNbIds.size === filteredNotebooks.length) {
+      setSelectedNbIds(new Set());
+    } else {
+      setSelectedNbIds(new Set(filteredNotebooks.map((nb) => nb._id)));
+    }
+  };
+
+  const bulkDeleteNbs = async () => {
+    try {
+      if (deleteAllMode) {
+        await axios.delete(`${API}/notebooks/all`, axiosCfg);
+      } else {
+        await axios.post(
+          `${API}/notebooks/bulk-delete`,
+          { ids: [...selectedNbIds] },
+          axiosCfg,
+        );
+      }
+      // If current notebook was in the deleted set, reset editor
+      if (deleteAllMode || (notebook?._id && selectedNbIds.has(notebook._id))) {
+        setNotebook(null);
+        setTitle("Untitled Document");
+        setBlocks([{ id: uid(), type: "text", html: "" }]);
+        setTags([]);
+        initBlocks.current.clear();
+        // Auto-create a new blank notebook
+        try {
+          const { data } = await axios.post(
+            `${API}/notebooks`,
+            { title: "Untitled Document" },
+            axiosCfg,
+          );
+          loadNb(data);
+        } catch (err) {
+          console.error("Auto-create notebook error:", err);
+        }
+      }
+      setSelectedNbIds(new Set());
+      setSelectionMode(false);
+      setShowDeleteConfirm(false);
+      setDeleteAllMode(false);
+      fetchAllNotebooks();
+      flash(
+        deleteAllMode
+          ? "All notebooks deleted!"
+          : `${selectedNbIds.size} notebook(s) deleted!`,
+      );
+    } catch (e) {
+      console.error("Bulk delete error:", e);
+      flash("Failed to delete notebooks.");
+    }
+  };
+
   /* ─── tags ─── */
   const tagColors = [
     { bg: "bg-primary/15", color: "text-primary" },
@@ -1020,10 +1098,64 @@ const Notepad = () => {
                   <FileText size={12} />
                   My Notebooks
                 </span>
-                <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full font-bold">
-                  {allNotebooks.length}
+                <span className="flex items-center gap-1.5">
+                  <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full font-bold">
+                    {allNotebooks.length}
+                  </span>
                 </span>
               </h2>
+
+              {/* Multi-select controls */}
+              <div className="flex items-center gap-1.5 px-1 mb-2">
+                <button
+                  onClick={toggleSelectionMode}
+                  className={`flex items-center gap-1 px-2 py-1 text-[10px] font-medium rounded-lg transition-all ${
+                    selectionMode
+                      ? "bg-primary/15 text-primary border border-primary/30"
+                      : "text-text-muted hover:text-text-secondary hover:bg-surface-hover border border-transparent"
+                  }`}
+                >
+                  <CheckSquare size={11} />
+                  {selectionMode ? "Cancel" : "Select"}
+                </button>
+                {selectionMode && (
+                  <>
+                    <button
+                      onClick={selectAllNbs}
+                      className="px-2 py-1 text-[10px] font-medium text-text-muted hover:text-primary hover:bg-surface-hover rounded-lg transition-all"
+                    >
+                      {selectedNbIds.size === filteredNotebooks.length
+                        ? "Deselect All"
+                        : "Select All"}
+                    </button>
+                    {selectedNbIds.size > 0 && (
+                      <button
+                        onClick={() => {
+                          setDeleteAllMode(false);
+                          setShowDeleteConfirm(true);
+                        }}
+                        className="ml-auto flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all"
+                      >
+                        <Trash2 size={10} />
+                        {selectedNbIds.size}
+                      </button>
+                    )}
+                  </>
+                )}
+                {!selectionMode && allNotebooks.length > 0 && (
+                  <button
+                    onClick={() => {
+                      setDeleteAllMode(true);
+                      setShowDeleteConfirm(true);
+                    }}
+                    className="ml-auto flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-rose-400/70 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all"
+                    title="Delete all notebooks"
+                  >
+                    <Trash size={10} />
+                    Clear All
+                  </button>
+                )}
+              </div>
 
               {/* Search */}
               <div className="relative mb-3 px-1">
@@ -1052,22 +1184,42 @@ const Notepad = () => {
                 {filteredNotebooks.map((nb) => (
                   <button
                     key={nb._id}
-                    onClick={() => selectNotebook(nb)}
+                    onClick={() =>
+                      selectionMode
+                        ? toggleSelectNb(nb._id)
+                        : selectNotebook(nb)
+                    }
                     className={`w-full text-left p-2.5 rounded-xl transition-all group ${
-                      notebook?._id === nb._id
-                        ? "bg-primary/10 border border-primary/20"
-                        : "hover:bg-surface-hover border border-transparent"
+                      selectionMode && selectedNbIds.has(nb._id)
+                        ? "bg-rose-500/10 border border-rose-400/30"
+                        : notebook?._id === nb._id && !selectionMode
+                          ? "bg-primary/10 border border-primary/20"
+                          : "hover:bg-surface-hover border border-transparent"
                     }`}
                   >
                     <div className="flex items-center gap-2">
-                      <FileText
-                        size={14}
-                        className={
-                          notebook?._id === nb._id
-                            ? "text-primary shrink-0"
-                            : "text-text-muted shrink-0"
-                        }
-                      />
+                      {selectionMode ? (
+                        selectedNbIds.has(nb._id) ? (
+                          <CheckSquare
+                            size={14}
+                            className="text-rose-400 shrink-0"
+                          />
+                        ) : (
+                          <Square
+                            size={14}
+                            className="text-text-muted shrink-0"
+                          />
+                        )
+                      ) : (
+                        <FileText
+                          size={14}
+                          className={
+                            notebook?._id === nb._id
+                              ? "text-primary shrink-0"
+                              : "text-text-muted shrink-0"
+                          }
+                        />
+                      )}
                       <div className="flex-1 min-w-0">
                         <p
                           className={`text-xs font-medium truncate ${
@@ -2065,6 +2217,72 @@ const Notepad = () => {
                   className="btn-primary !px-6 !py-2 text-sm"
                 >
                   Link ({linkedTaskIds.length})
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ─── Delete Confirm Modal ─── */}
+      <AnimatePresence>
+        {showDeleteConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4"
+            onClick={() => {
+              setShowDeleteConfirm(false);
+              setDeleteAllMode(false);
+            }}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-surface rounded-2xl border border-border shadow-float w-full max-w-sm p-6"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center">
+                  <Trash2 size={20} className="text-rose-400" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-text-main">
+                    {deleteAllMode ? "Delete All Notebooks" : "Delete Selected"}
+                  </h2>
+                  <p className="text-xs text-text-muted">
+                    {deleteAllMode
+                      ? `This will permanently delete all ${allNotebooks.length} notebook(s).`
+                      : `This will permanently delete ${selectedNbIds.size} selected notebook(s).`}
+                  </p>
+                </div>
+              </div>
+              <div className="bg-rose-500/5 border border-rose-500/10 rounded-xl p-3 mb-5">
+                <p className="text-[11px] text-rose-300 leading-relaxed">
+                  <span className="font-bold">Warning:</span> This action cannot
+                  be undone. All content in the deleted notebooks will be
+                  permanently lost.
+                </p>
+              </div>
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => {
+                    setShowDeleteConfirm(false);
+                    setDeleteAllMode(false);
+                  }}
+                  className="px-4 py-2 text-sm text-text-muted hover:text-text-main transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={bulkDeleteNbs}
+                  className="px-6 py-2 text-sm font-medium bg-rose-500 hover:bg-rose-600 text-white rounded-xl transition-colors"
+                >
+                  {deleteAllMode
+                    ? "Delete All"
+                    : `Delete (${selectedNbIds.size})`}
                 </button>
               </div>
             </motion.div>

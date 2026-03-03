@@ -15,10 +15,13 @@ import {
   SortAsc,
   X,
   Menu,
+  Sparkles,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { useNudgeStore } from "../store/nudgeStore";
+import NudgesPanel from "../components/NudgesPanel";
 
 const API = "http://localhost:5000/api/subjects";
 const axiosCfg = { withCredentials: true };
@@ -36,6 +39,13 @@ const Subjects = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(false);
 
+  const {
+    toggleOpen: toggleNudges,
+    getCount: getNudgeCount,
+    refresh: refreshNudges,
+  } = useNudgeStore();
+  const nudgeCount = getNudgeCount();
+
   // Fetch subjects from API
   useEffect(() => {
     const fetchSubjects = async () => {
@@ -49,6 +59,7 @@ const Subjects = () => {
       }
     };
     fetchSubjects();
+    refreshNudges();
   }, []);
 
   // Create subject
@@ -203,11 +214,15 @@ const Subjects = () => {
 
           <div className="hidden md:flex items-center gap-6">
             <button
-              onClick={() => handleFeatureClick("Notifications")}
+              onClick={toggleNudges}
               className="relative p-2 text-text-secondary hover:text-primary transition-colors hover:bg-surface-hover rounded-xl shadow-inner border border-transparent hover:border-border/50"
             >
-              <Bell size={24} />
-              <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-surface"></span>
+              <Sparkles size={24} />
+              {nudgeCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-white text-[10px] flex items-center justify-center font-bold border-2 border-surface">
+                  {nudgeCount > 9 ? "9+" : nudgeCount}
+                </span>
+              )}
             </button>
             <div className="flex items-center gap-3 pl-6 border-l border-border/50">
               <div className="text-right hidden lg:block">
@@ -556,6 +571,9 @@ const Subjects = () => {
           </div>
         </div>
       )}
+
+      {/* Nudges Panel */}
+      <NudgesPanel />
     </div>
   );
 };
