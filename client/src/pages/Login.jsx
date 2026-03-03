@@ -3,6 +3,14 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import Character from "../components/Character";
 import { motion } from "framer-motion";
+import {
+  FaLinkedin,
+  FaGithub,
+  FaReddit,
+  FaDiscord,
+  FaQuora,
+} from "react-icons/fa";
+import { Link } from "lucide-react";
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -10,6 +18,11 @@ const Login = () => {
     username: "",
     email: "",
     password: "",
+    linkedin: "",
+    github: "",
+    reddit: "",
+    discord: "",
+    quora: "",
   });
   const [error, setError] = useState("");
   const { login, register } = useAuth();
@@ -27,7 +40,13 @@ const Login = () => {
       if (isLogin) {
         await login(formData.email, formData.password);
       } else {
-        await register(formData.username, formData.email, formData.password);
+        await register(formData.username, formData.email, formData.password, {
+          linkedin: formData.linkedin,
+          github: formData.github,
+          reddit: formData.reddit,
+          discord: formData.discord,
+          quora: formData.quora,
+        });
       }
       navigate("/dashboard");
     } catch (error) {
@@ -127,6 +146,41 @@ const Login = () => {
             {error && (
               <div className="bg-red-50 text-red-600 px-4 py-3 rounded-xl text-sm shadow-inner">
                 {error}
+              </div>
+            )}
+
+            {!isLogin && (
+              <div className="pt-3 border-t border-border/30">
+                <p className="text-xs font-medium text-text-secondary mb-3 flex items-center gap-1.5">
+                  <Link size={12} /> Profile Links
+                  <span className="text-text-muted font-normal">(Optional)</span>
+                </p>
+                <div className="space-y-2.5">
+                  {[
+                    { key: "linkedin", icon: <FaLinkedin size={14} />, color: "#0077B5", placeholder: "LinkedIn URL" },
+                    { key: "github", icon: <FaGithub size={14} />, color: "#6e5494", placeholder: "GitHub URL" },
+                    { key: "reddit", icon: <FaReddit size={14} />, color: "#FF4500", placeholder: "Reddit URL" },
+                    { key: "discord", icon: <FaDiscord size={14} />, color: "#5865F2", placeholder: "Discord username" },
+                    { key: "quora", icon: <FaQuora size={14} />, color: "#B92B27", placeholder: "Quora URL" },
+                  ].map(({ key, icon, color, placeholder }) => (
+                    <div key={key} className="flex items-center gap-2.5">
+                      <div
+                        className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                        style={{ backgroundColor: color + "18", color }}
+                      >
+                        {icon}
+                      </div>
+                      <input
+                        type="text"
+                        name={key}
+                        value={formData[key]}
+                        onChange={handleChange}
+                        className="flex-1 px-3 py-2 bg-background shadow-inner rounded-xl text-sm focus:ring-2 focus:ring-primary focus:outline-none transition-all placeholder-text-muted text-text-main"
+                        placeholder={placeholder}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 

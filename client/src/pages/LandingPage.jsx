@@ -290,6 +290,7 @@ const stack = [
 ];
 
 export default function LandingPage() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { scrollY } = useScroll();
   const headerY = useTransform(scrollY, [0, 100], [0, -100]); // Parallax header if needed, or simple stick
   const navBg = useTransform(
@@ -311,10 +312,10 @@ export default function LandingPage() {
         style={{ backgroundColor: navBg, borderBottom: `1px solid`, borderColor: navBorder }}
         className="fixed top-0 inset-x-0 z-50 backdrop-blur-md transition-all"
       >
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img src="/logo.jpeg" alt="Mantessa" className="w-10 h-10 rounded-xl object-contain shadow-lg shadow-emerald-200" />
-            <span className="text-xl font-bold tracking-tight text-text-main">Mantessa</span>
+            <img src="/logo.jpeg" alt="Mantessa" className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl object-contain shadow-lg shadow-emerald-200" />
+            <span className="text-lg sm:text-xl font-bold tracking-tight text-text-main">Mantessa</span>
           </div>
 
           <div className="hidden md:flex items-center gap-8">
@@ -329,24 +330,55 @@ export default function LandingPage() {
             ))}
           </div>
 
-          <div className="flex items-center gap-4">
-            <Link to="/login" className="text-sm font-bold text-text-secondary hover:text-primary">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <Link to="/login" className="text-sm font-bold text-text-secondary hover:text-primary hidden sm:inline">
               Log in
             </Link>
             <Link
               to="/login"
-              className="px-5 py-2.5 rounded-xl bg-primary text-white text-sm font-bold hover:bg-emerald-700 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-emerald-200"
+              className="px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl bg-primary text-white text-sm font-bold hover:bg-emerald-700 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-emerald-200"
             >
               Get Started
             </Link>
+            {/* Mobile hamburger */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 rounded-lg hover:bg-surface transition-colors text-text-main"
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+              )}
+            </button>
           </div>
         </div>
+
+        {/* Mobile dropdown menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-white/95 backdrop-blur-md border-t border-border/30 px-4 py-4 space-y-3">
+            {["Features", "Methodology", "Testimonials"].map((item) => (
+              <a
+                key={item}
+                href={`#${item.toLowerCase()}`}
+                onClick={() => setMobileMenuOpen(false)}
+                className="block text-sm font-semibold text-text-secondary hover:text-primary transition-colors py-1"
+              >
+                {item}
+              </a>
+            ))}
+            <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="block text-sm font-bold text-text-secondary hover:text-primary py-1 sm:hidden">
+              Log in
+            </Link>
+          </div>
+        )}
       </motion.nav>
 
-      <main className="pt-32 pb-20 overflow-hidden">
+      <main className="pt-24 sm:pt-32 pb-12 sm:pb-20 overflow-hidden">
         
         {/* ── Hero Section ─────────────────────────────────────────────── */}
-        <section className="relative px-6 mb-32">
+        <section className="relative px-4 sm:px-6 mb-16 sm:mb-32">
           {/* Background decor */}
           <div className="absolute top-0 right-0 -z-10 opacity-20 transform translate-x-1/3 -translate-y-1/4">
             <svg width="600" height="600" viewBox="0 0 600 600" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -373,14 +405,14 @@ export default function LandingPage() {
                 </span>
               </motion.div>
               
-              <motion.h1 variants={fadeUp} className="text-5xl lg:text-7xl font-extrabold tracking-tight text-text-main leading-[1.1] mb-6">
+              <motion.h1 variants={fadeUp} className="text-3xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight text-text-main leading-[1.1] mb-4 sm:mb-6">
                 Master your <br/>
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">
                   academic life.
                 </span>
               </motion.h1>
               
-              <motion.p variants={fadeUp} className="text-lg text-text-secondary mb-8 max-w-lg mx-auto lg:mx-0 leading-relaxed">
+              <motion.p variants={fadeUp} className="text-base sm:text-lg text-text-secondary mb-6 sm:mb-8 max-w-lg mx-auto lg:mx-0 leading-relaxed">
                 Mantessa unifies task management, scheduling, and creative tools into one powerful platform designed for high-performance students.
               </motion.p>
               
@@ -402,13 +434,15 @@ export default function LandingPage() {
               </motion.div>
             </motion.div>
 
-            {/* Hero Visualization */}
-            <DashboardMockup />
+            {/* Hero Visualization – hidden on small screens */}
+            <div className="hidden lg:block">
+              <DashboardMockup />
+            </div>
           </div>
         </section>
 
         {/* ── Logos / Trust ────────────────────────────────────────────── */}
-        <section className="py-10 border-y border-gray-100 bg-white/50 mb-32">
+        <section className="py-8 sm:py-10 border-y border-gray-100 bg-white/50 mb-16 sm:mb-32">
            <div className="max-w-7xl mx-auto px-6 text-center">
               <p className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-8">Powering students from</p>
               <div className="flex flex-wrap justify-center items-center gap-12 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
@@ -423,10 +457,10 @@ export default function LandingPage() {
         </section>
 
         {/* ── Features Grid ────────────────────────────────────────────── */}
-        <section id="features" className="max-w-7xl mx-auto px-6 mb-32">
-          <div className="text-center mb-20">
+        <section id="features" className="max-w-7xl mx-auto px-4 sm:px-6 mb-16 sm:mb-32">
+          <div className="text-center mb-10 sm:mb-20">
             <SectionLabel color="bg-emerald-100 text-emerald-700">Everything Included</SectionLabel>
-            <h2 className="text-4xl font-extrabold text-text-main mb-4">
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-text-main mb-4">
               More than just a todo list
             </h2>
             <p className="text-lg text-text-secondary max-w-2xl mx-auto">
@@ -455,15 +489,15 @@ export default function LandingPage() {
         </section>
 
         {/* ── Big Feature Highlight 1 ──────────────────────────────────── */}
-        <section className="max-w-7xl mx-auto px-6 mb-32">
-           <div className="bg-text-main rounded-[2.5rem] p-8 md:p-16 text-white overflow-hidden relative">
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 mb-16 sm:mb-32">
+           <div className="bg-text-main rounded-2xl sm:rounded-[2.5rem] p-5 sm:p-8 md:p-16 text-white overflow-hidden relative">
               <div className="relative z-10 grid md:grid-cols-2 gap-12 items-center">
                  <div>
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white text-xs font-bold mb-6 border border-white/20">
                        <Zap size={14} className="fill-emerald-400 text-emerald-400" />
                        <span className="uppercase tracking-wide">Focus Mode</span>
                     </div>
-                    <h2 className="text-4xl md:text-5xl font-extrabold mb-6 leading-tight">
+                    <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold mb-4 sm:mb-6 leading-tight">
                        Deep work made <br/>
                        <span className="text-emerald-400">effortless.</span>
                     </h2>
@@ -486,7 +520,7 @@ export default function LandingPage() {
                           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                        </div>
                        <div className="text-center mb-8">
-                          <div className="text-7xl font-mono font-bold tracking-tighter mb-2">25:00</div>
+                          <div className="text-4xl sm:text-7xl font-mono font-bold tracking-tighter mb-2">25:00</div>
                           <span className="text-sm font-medium bg-white/20 px-3 py-1 rounded-full">Work Session</span>
                        </div>
                        <div className="flex gap-4">
@@ -500,11 +534,11 @@ export default function LandingPage() {
         </section>
 
         {/* ── Methodology / Steps ─────────────────────────────────────── */}
-        <section id="methodology" className="max-w-7xl mx-auto px-6 mb-32">
+        <section id="methodology" className="max-w-7xl mx-auto px-4 sm:px-6 mb-16 sm:mb-32">
            <div className="grid md:grid-cols-2 gap-16 items-center">
               <div>
                  <SectionLabel color="bg-emerald-100 text-emerald-700">The Workflow</SectionLabel>
-                 <h2 className="text-4xl font-extrabold text-text-main mb-6">Designed for flow, not friction.</h2>
+                 <h2 className="text-2xl sm:text-4xl font-extrabold text-text-main mb-6">Designed for flow, not friction.</h2>
                  <p className="text-lg text-text-secondary mb-10">Mantessa gets out of your way so the only thing you have to focus on is your work.</p>
                  
                  <div className="space-y-8">
@@ -525,7 +559,7 @@ export default function LandingPage() {
                     ))}
                  </div>
               </div>
-              <div className="bg-surface-hover rounded-[2rem] h-[500px] relative overflow-hidden text-text-muted">
+              <div className="bg-surface-hover rounded-2xl sm:rounded-[2rem] h-[300px] sm:h-[400px] md:h-[500px] relative overflow-hidden text-text-muted">
                  {/* Decorative Illustration Area */}
                  <div className="absolute inset-0 flex items-center justify-center">
                     <div className="relative w-64 h-64">
@@ -559,10 +593,10 @@ export default function LandingPage() {
         </section>
 
         {/* ── Testimonials ────────────────────────────────────────────── */}
-        <section id="testimonials" className="bg-surface-hover py-24 mb-24">
+        <section id="testimonials" className="bg-surface-hover py-12 sm:py-24 mb-12 sm:mb-24">
            <div className="max-w-7xl mx-auto px-6">
-              <div className="text-center mb-16">
-                 <h2 className="text-3xl font-bold text-text-main">What students are saying</h2>
+              <div className="text-center mb-8 sm:mb-16">
+                 <h2 className="text-2xl sm:text-3xl font-bold text-text-main">What students are saying</h2>
               </div>
               <div className="grid md:grid-cols-3 gap-8">
                  {[
@@ -591,7 +625,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── Tech Stack ──────────────────────────────────────────────── */}
-        <section className="max-w-4xl mx-auto px-6 mb-32 text-center">
+        <section className="max-w-4xl mx-auto px-4 sm:px-6 mb-16 sm:mb-32 text-center">
            <p className="font-bold text-text-muted text-sm tracking-widest uppercase mb-8">Built with modern tech</p>
            <div className="flex flex-wrap justify-center gap-4">
               {stack.map((tech) => (
@@ -604,14 +638,14 @@ export default function LandingPage() {
         </section>
 
         {/* ── CTA ─────────────────────────────────────────────────────── */}
-        <section className="max-w-5xl mx-auto px-6 text-center pb-20">
-           <div className="bg-gradient-to-tr from-emerald-600 to-teal-600 rounded-3xl p-12 md:p-20 text-white shadow-2xl shadow-emerald-200 relative overflow-hidden">
+        <section className="max-w-5xl mx-auto px-4 sm:px-6 text-center pb-12 sm:pb-20">
+           <div className="bg-gradient-to-tr from-emerald-600 to-teal-600 rounded-2xl sm:rounded-3xl p-6 sm:p-12 md:p-20 text-white shadow-2xl shadow-emerald-200 relative overflow-hidden">
                {/* Decorative circles */}
                <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
                <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-400 opacity-20 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl"></div>
 
                <div className="relative z-10">
-                  <h2 className="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight">Ready to upgrade your workflow?</h2>
+                  <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold mb-4 sm:mb-6 tracking-tight">Ready to upgrade your workflow?</h2>
                   <p className="text-emerald-100 text-lg mb-10 max-w-xl mx-auto">Join the new wave of productive students. No credit card required, free forever for individuals.</p>
                   
                   <div className="flex flex-col sm:flex-row justify-center gap-4">
@@ -629,7 +663,7 @@ export default function LandingPage() {
       </main>
 
       {/* ── Footer ────────────────────────────────────────────────────── */}
-      <footer className="bg-white border-t border-border py-12 px-6">
+      <footer className="bg-white border-t border-border py-8 sm:py-12 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
            <div className="flex items-center gap-2">
               <img src="/logo.jpeg" alt="Mantessa" className="w-8 h-8 rounded-lg object-contain" />

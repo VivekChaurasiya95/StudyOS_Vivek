@@ -119,6 +119,7 @@ const Notepad = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(false);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
+  const [isDocInfoOpen, setIsDocInfoOpen] = useState(false);
   const [searchParams] = useSearchParams();
   const { socketRef, connected: socketConnected } = useSocket();
   const [liveUsers, setLiveUsers] = useState(0);
@@ -1041,15 +1042,31 @@ const Notepad = () => {
           />
         )}
 
+        {/* Doc Info Overlay (below lg) */}
+        {isDocInfoOpen && (
+          <div
+            onClick={() => setIsDocInfoOpen(false)}
+            className="fixed inset-0 bg-black/60 z-30 lg:hidden backdrop-blur-sm"
+          />
+        )}
+
         {/* ─── library sidebar ─── */}
         <aside
           className={`fixed inset-y-0 left-0 z-40 w-64 border-r border-border bg-surface/95 backdrop-blur-md flex-col shrink-0 overflow-y-auto transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 lg:flex ${isLibraryOpen ? "translate-x-0 flex" : "-translate-x-full hidden lg:flex"}`}
         >
           <div className="p-6 flex flex-col h-full">
-            {/* Subjects Section */}
-            <h2 className="text-xs font-bold uppercase tracking-widest text-text-muted mb-4 px-2">
-              Library
-            </h2>
+            {/* Mobile close + heading */}
+            <div className="flex items-center justify-between mb-4 px-2">
+              <h2 className="text-xs font-bold uppercase tracking-widest text-text-muted">
+                Library
+              </h2>
+              <button
+                onClick={() => setIsLibraryOpen(false)}
+                className="lg:hidden p-1 text-text-muted hover:text-primary rounded-lg transition-colors"
+              >
+                <X size={16} />
+              </button>
+            </div>
             <div className="space-y-1">
               {library.map((folder, fi) => (
                 <div key={folder._id || fi}>
@@ -1293,7 +1310,7 @@ const Notepad = () => {
             </div>
 
             {/* format buttons */}
-            <div className="flex items-center gap-0.5 border-x border-border px-2">
+            <div className="hidden sm:flex items-center gap-0.5 border-x border-border px-2 overflow-x-auto min-w-0">
               <TBtn onClick={() => exec("bold")} title="Bold (Ctrl+B)">
                 <Bold size={18} />
               </TBtn>
@@ -1384,6 +1401,13 @@ const Notepad = () => {
                 <Share2 size={16} /> Share
               </button>
               <button
+                onClick={() => setIsDocInfoOpen((v) => !v)}
+                className="lg:hidden p-2 text-text-muted hover:text-primary transition-colors"
+                title="Document Info"
+              >
+                <FileText size={16} />
+              </button>
+              <button
                 onClick={() => setIsRightPanelOpen(true)}
                 className="xl:hidden p-2 text-text-muted hover:text-primary transition-colors"
                 title="Panel"
@@ -1394,7 +1418,7 @@ const Notepad = () => {
           </header>
 
           {/* blocks content */}
-          <div className="flex-1 overflow-y-auto px-6 py-10 md:px-16 lg:px-24">
+          <div className="flex-1 overflow-y-auto px-4 py-8 sm:px-6 md:px-10 lg:px-6 xl:px-8 2xl:px-16">
             <div className="max-w-3xl mx-auto">
               {/* title */}
               <input
@@ -1516,7 +1540,19 @@ const Notepad = () => {
         </main>
 
         {/* ─── document info sidebar (enhanced) ─── */}
-        <aside className="hidden lg:flex w-80 border-l border-border bg-background/50 flex-col shrink-0 overflow-y-auto p-5 gap-5">
+        <aside
+          className={`fixed inset-y-0 right-0 z-40 w-72 border-l border-border bg-background/95 backdrop-blur-md flex-col shrink-0 overflow-y-auto p-4 gap-4 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 lg:flex lg:w-60 xl:w-64 2xl:w-72 lg:bg-background/50 lg:backdrop-blur-none ${
+            isDocInfoOpen ? "translate-x-0 flex" : "translate-x-full hidden lg:flex"
+          }`}
+        >
+          {/* Mobile close button */}
+          <button
+            onClick={() => setIsDocInfoOpen(false)}
+            className="lg:hidden self-end p-1 text-text-muted hover:text-primary rounded-lg transition-colors"
+          >
+            <X size={16} />
+          </button>
+
           {/* ── Document Info ── */}
           <div>
             <h3 className="text-xs font-bold uppercase tracking-widest text-text-muted mb-3 flex items-center gap-2">
@@ -1588,7 +1624,7 @@ const Notepad = () => {
                       {tag.label}
                       <X
                         size={9}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
                         onClick={() => removeTag(i)}
                       />
                     </span>

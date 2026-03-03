@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useMemo } from "react";
 import {
   Calendar,
   Calculator,
@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useDashboardStore } from "../store/dashboardStore";
 
 const Sidebar = ({ onMobileClose }) => {
   const { logout } = useAuth();
@@ -21,39 +21,20 @@ const Sidebar = ({ onMobileClose }) => {
     if (onMobileClose) onMobileClose();
   };
 
-  // --- Fetch real task stats ---
-  const [taskPercent, setTaskPercent] = useState(0);
-  const [statusLabel, setStatusLabel] = useState("No Tasks");
+  // --- Derive task stats from shared store ---
+  const { totalTasks, completedTasks } = useDashboardStore();
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const { data } = await axios.get(
-          "http://localhost:5000/api/dashboard",
-          {
-            withCredentials: true,
-          },
-        );
-        const total = data.totalTasks || 0;
-        const done = data.completedTasks || 0;
-        const pct = total > 0 ? Math.round((done / total) * 100) : 0;
-        setTaskPercent(pct);
+  const taskPercent = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
-        if (total === 0) setStatusLabel("No Tasks");
-        else if (pct === 100) setStatusLabel("Complete!");
-        else if (pct >= 80) setStatusLabel("On Track");
-        else if (pct >= 60) setStatusLabel("Almost There");
-        else if (pct >= 30) setStatusLabel("In Progress");
-        else if (pct > 0) setStatusLabel("Getting Started");
-        else setStatusLabel("Not Started");
-      } catch {
-        // silently fail
-      }
-    };
-    fetchStats();
-    const interval = setInterval(fetchStats, 30000); // refresh every 30s
-    return () => clearInterval(interval);
-  }, []);
+  const statusLabel = useMemo(() => {
+    if (totalTasks === 0) return "No Tasks";
+    if (taskPercent === 100) return "Complete!";
+    if (taskPercent >= 80) return "On Track";
+    if (taskPercent >= 60) return "Almost There";
+    if (taskPercent >= 30) return "In Progress";
+    if (taskPercent > 0) return "Getting Started";
+    return "Not Started";
+  }, [totalTasks, taskPercent]);
 
   // SVG ring calculations
   const circumference = 2 * Math.PI * 12; // r=12
@@ -87,7 +68,7 @@ const Sidebar = ({ onMobileClose }) => {
   const currentPath = window.location.pathname;
 
   return (
-    <aside className="w-64 md:w-20 md:hover:w-64 bg-surface h-full flex flex-col justify-between py-6 z-50 overflow-hidden custom-scrollbar shadow-card transition-all duration-300 ease-in-out group border-r border-border">
+    <aside className="w-64 md:w-20 md:hover:w-64 bg-surface h-full flex flex-col justify-between py-6 z-50 overflow-y-auto overflow-x-hidden custom-scrollbar shadow-card transition-all duration-300 ease-in-out group border-r border-border">
       {/* Logo Area */}
       <div className="flex flex-col gap-6 w-full px-4">
         <div

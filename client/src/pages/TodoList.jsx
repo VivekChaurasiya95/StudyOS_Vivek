@@ -181,7 +181,7 @@ const TaskCard = ({ task, columnId, moveTask, deleteTask }) => {
             {canMoveLeft && (
               <button
                 onClick={() => moveTask(task.id, columnId, canMoveLeft)}
-                className="p-1 text-text-muted/50 hover:text-blue-400 opacity-0 group-hover:opacity-100 transition-all rounded-lg hover:bg-blue-500/10"
+                className="p-1 text-text-muted/50 hover:text-blue-400 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all rounded-lg hover:bg-blue-500/10"
                 title={`Move to ${columnConfig[canMoveLeft].label}`}
               >
                 <ChevronLeft size={14} />
@@ -190,7 +190,7 @@ const TaskCard = ({ task, columnId, moveTask, deleteTask }) => {
             {canMoveRight && (
               <button
                 onClick={() => moveTask(task.id, columnId, canMoveRight)}
-                className="p-1 text-text-muted/50 hover:text-primary opacity-0 group-hover:opacity-100 transition-all rounded-lg hover:bg-primary/10"
+                className="p-1 text-text-muted/50 hover:text-primary opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all rounded-lg hover:bg-primary/10"
                 title={`Move to ${columnConfig[canMoveRight].label}`}
               >
                 <ChevronRight size={14} />

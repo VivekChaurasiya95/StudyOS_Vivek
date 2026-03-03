@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Sidebar from "../components/Sidebar";
 import RightPanel from "../components/RightPanel";
 import {
@@ -19,10 +19,10 @@ import {
 import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { useFocusStore } from "../store/focusStore";
 import { useNudgeStore } from "../store/nudgeStore";
-import NudgesPanel from "../components/NudgesPanel";
+import { useDashboardStore } from "../store/dashboardStore";
+
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -45,46 +45,24 @@ const Dashboard = () => {
     hydrate,
   } = useFocusStore();
 
-  const [dashboardData, setDashboardData] = useState({
-    stats: {
-      studyHours: 0,
-      todayHours: 0,
-      tasksDone: 0,
-      currentStreak: 0,
-      focusScore: 0,
-    },
-    subjects: [],
-    pendingTasks: 0,
-    totalTasks: 0,
-    completedTasks: 0,
-    upcomingEvents: [],
-    weeklyActivity: [],
-    recentSketches: [],
-    todayFocusSeconds: 0,
-  });
-  const [loading, setLoading] = useState(true);
-
-  const fetchDashboardData = useCallback(async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:5000/api/dashboard",
-        { withCredentials: true },
-      );
-      setDashboardData(response.data);
-    } catch (error) {
-      console.error("Error fetching dashboard data:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  // Shared dashboard store – single source of truth
+  const {
+    stats: dashStats,
+    subjects,
+    pendingTasks,
+    totalTasks,
+    upcomingEvents,
+    weeklyActivity,
+    loading,
+    fetch: fetchDashboard,
+    fetchIfStale,
+  } = useDashboardStore();
 
   useEffect(() => {
     if (user) {
-      fetchDashboardData();
-      hydrate(); // sync focus session state from server
+      fetchDashboard();   // always force-fetch on user change
+      hydrate();
       refreshNudges();
-    } else {
-      setLoading(false);
     }
   }, [user]);
 
@@ -92,19 +70,19 @@ const Dashboard = () => {
   const prevFocusRef = useRef(focusIsActive);
   useEffect(() => {
     if (prevFocusRef.current && !focusIsActive && user) {
-      fetchDashboardData();
+      fetchDashboard();
     }
     prevFocusRef.current = focusIsActive;
   }, [focusIsActive]);
 
   // Live study hours including the active session's elapsed time
   const liveStudyHours = focusIsActive
-    ? parseFloat(((dashboardData.stats.studyHours || 0) + focusElapsed / 3600).toFixed(1))
-    : dashboardData.stats.studyHours;
+    ? parseFloat(((dashStats.studyHours || 0) + focusElapsed / 3600).toFixed(1))
+    : dashStats.studyHours;
 
   const liveTodayHours = focusIsActive
-    ? parseFloat(((dashboardData.stats.todayHours || 0) + focusElapsed / 3600).toFixed(1))
-    : dashboardData.stats.todayHours;
+    ? parseFloat(((dashStats.todayHours || 0) + focusElapsed / 3600).toFixed(1))
+    : dashStats.todayHours;
 
   const handleStartSession = async () => {
     if (!focusIsActive) {
@@ -130,7 +108,7 @@ const Dashboard = () => {
       </div>
 
       {/* Main Content Area */}
-      <main className="flex-1 md:ml-20 main-content right-panel-transition p-4 md:p-8 overflow-y-auto h-screen relative z-0">
+      <main className="flex-1 md:ml-20 main-content right-panel-transition p-4 md:p-8 overflow-y-auto overflow-x-hidden h-screen relative z-0">
         {/* Header */}
         <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           {/* Mobile Menu Button */}
@@ -200,7 +178,7 @@ const Dashboard = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-10 bg-primary/10 rounded-3xl p-8 shadow-card border border-primary/20 relative overflow-hidden flex flex-col md:flex-row items-center justify-between group hover:shadow-float transition-all duration-500"
+          className="mb-6 sm:mb-10 bg-primary/10 rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-card border border-primary/20 relative overflow-hidden flex flex-col md:flex-row items-center justify-between group hover:shadow-float transition-all duration-500"
         >
           <div className="relative z-10 max-w-xl">
             <h1 className="text-2xl md:text-3xl font-bold text-text-main mb-3 tracking-tight">
@@ -212,14 +190,14 @@ const Dashboard = () => {
             <p className="text-text-secondary leading-relaxed mb-8 text-base md:text-lg">
               You have{" "}
               <span className="font-bold text-primary">
-                {dashboardData.pendingTasks} tasks
+                {pendingTasks} tasks
               </span>{" "}
               pending for today. Your productivity score is looking great!
             </p>
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={handleStartSession}
-                className="btn-primary flex items-center gap-2"
+                className="btn-primary flex items-center justify-center gap-2"
               >
                 {focusIsActive ? (
                   <>
@@ -233,17 +211,14 @@ const Dashboard = () => {
               </button>
               <button
                 onClick={() => navigate("/calendar")}
-                className="bg-surface text-text-main border border-border px-8 py-3.5 rounded-2xl font-semibold shadow-soft hover:shadow-card transition-all duration-200 flex items-center gap-2"
+                className="bg-surface text-text-main border border-border px-6 py-3 sm:px-8 sm:py-3.5 rounded-2xl font-semibold shadow-soft hover:shadow-card transition-all duration-200 flex items-center justify-center gap-2"
               >
                 <Calendar size={18} /> View Calendar
               </button>
             </div>
           </div>
 
-          {/* Decorative Abstract Shapes */}
-          <div className="absolute right-0 top-0 h-full w-1/3 opacity-50 pointer-events-none">
-            <div className="absolute top-10 right-10 w-32 h-32 bg-transparent rounded-full blur-3xl animate-pulse"></div>
-          </div>
+
         </motion.div>
 
         {/* Stats Grid */}
@@ -256,44 +231,44 @@ const Dashboard = () => {
           {[
             {
               label: "Study Hours",
-              value: `${liveStudyHours}h`,
+              value: `${liveTodayHours}h`,
               icon: Clock,
               color: "text-blue-500",
               bg: "bg-blue-100",
               trend:
-                liveTodayHours > 0
-                  ? `+${liveTodayHours}h today`
+                liveStudyHours > 0
+                  ? `${liveStudyHours}h total`
                   : "Start studying",
             },
             {
               label: "Tasks Done",
-              value: `${dashboardData.stats.tasksDone}/${dashboardData.totalTasks || 0}`,
+              value: `${dashStats.tasksDone}/${totalTasks || 0}`,
               icon: CheckCircle2,
               color: "text-primary",
               bg: "bg-primary-light",
               trend:
-                dashboardData.pendingTasks > 0
-                  ? `${dashboardData.pendingTasks} pending`
+                pendingTasks > 0
+                  ? `${pendingTasks} pending`
                   : "All done!",
             },
             {
               label: "Current Streak",
-              value: `${dashboardData.stats.currentStreak} Days`,
+              value: `${dashStats.currentStreak} Days`,
               icon: Zap,
               color: "text-amber-500",
               bg: "bg-amber-100",
               trend:
-                dashboardData.stats.currentStreak > 0
+                dashStats.currentStreak > 0
                   ? "Keep going!"
                   : "Start today",
             },
             {
               label: "Focus Score",
-              value: dashboardData.stats.focusScore,
+              value: dashStats.focusScore,
               icon: TrendingUp,
               color: "text-purple-500",
               bg: "bg-purple-100",
-              trend: `${dashboardData.stats.focusScore} sessions`,
+              trend: `${dashStats.focusScore} sessions`,
             },
           ].map((stat, i) => (
             <motion.div
@@ -338,7 +313,7 @@ const Dashboard = () => {
                 </button>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {dashboardData.subjects.map((subject, i) => (
+                {subjects.map((subject, i) => (
                   <div
                     key={i}
                     onClick={() => navigate("/subjects")}
@@ -368,7 +343,7 @@ const Dashboard = () => {
                     </div>
                   </div>
                 ))}
-                {dashboardData.subjects.length === 0 && (
+                {subjects.length === 0 && (
                   <div className="col-span-2 text-center py-6 text-text-muted">
                     No focus subjects found for today.
                   </div>
@@ -382,10 +357,10 @@ const Dashboard = () => {
             <div className="card text-text-main relative overflow-hidden group">
               <div className="relative z-10">
                 <h3 className="text-lg font-bold mb-4">Upcoming Events</h3>
-                {dashboardData.upcomingEvents &&
-                dashboardData.upcomingEvents.length > 0 ? (
+                {upcomingEvents &&
+                upcomingEvents.length > 0 ? (
                   <div className="space-y-3">
-                    {dashboardData.upcomingEvents.map((event, i) => (
+                    {upcomingEvents.map((event, i) => (
                       <div
                         key={event._id || i}
                         className="flex items-start gap-3 p-3 bg-background rounded-xl"
@@ -437,9 +412,9 @@ const Dashboard = () => {
             <div className="card">
               <h3 className="font-bold text-text-main mb-4">Weekly Activity</h3>
               <div className="h-32 flex items-end justify-between gap-2 px-1">
-                {(dashboardData.weeklyActivity &&
-                dashboardData.weeklyActivity.length > 0
-                  ? dashboardData.weeklyActivity
+                {(weeklyActivity &&
+                weeklyActivity.length > 0
+                  ? weeklyActivity
                   : [
                       { day: "Mon", percent: 0, minutes: 0 },
                       { day: "Tue", percent: 0, minutes: 0 },
@@ -489,8 +464,6 @@ const Dashboard = () => {
         <RightPanel onClose={() => setIsRightPanelOpen(false)} />
       </div>
 
-      {/* Nudges Panel */}
-      <NudgesPanel />
     </div>
   );
 };

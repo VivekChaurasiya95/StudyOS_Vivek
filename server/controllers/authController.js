@@ -17,7 +17,7 @@ const generateToken = (id) => {
 // @route   POST /api/auth/register
 // @access  Public
 exports.registerUser = async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, socialLinks } = req.body;
 
   try {
     // Validate input
@@ -47,16 +47,17 @@ exports.registerUser = async (req, res) => {
       username,
       email,
       password,
+      ...(socialLinks && { socialLinks }),
     });
 
     if (user) {
-      // Initialize basic stats and dummy content
+      // Initialize empty stats for fresh account
       await UserStat.create({
         user: user._id,
-        focusScore: 85,
-        currentStreak: 7,
-        studyHours: 42.5,
-        tasksDone: 18,
+        focusScore: 0,
+        currentStreak: 0,
+        studyHours: 0,
+        tasksDone: 0,
       });
 
       await Subject.create([
@@ -305,7 +306,8 @@ exports.registerUser = async (req, res) => {
         _id: user._id,
         username: user.username,
         email: user.email,
-        token, // Optional: send token if client needs it for non-cookie auth
+        socialLinks: user.socialLinks,
+        token,
       });
     } else {
       res.status(400).json({ message: "Invalid user data" });
@@ -339,6 +341,7 @@ exports.loginUser = async (req, res) => {
         _id: user._id,
         username: user.username,
         email: user.email,
+        socialLinks: user.socialLinks,
         token,
       });
     } else {
@@ -380,12 +383,7 @@ exports.updateSocialLinks = async (req, res) => {
   try {
     const { linkedin, github, reddit, discord, quora } = req.body;
 
-    // Validate that at least one link is provided
     const links = { linkedin, github, reddit, discord, quora };
-    const hasAtLeastOne = Object.values(links).some((v) => v && v.trim() !== '');
-    if (!hasAtLeastOne) {
-      return res.status(400).json({ message: 'Please provide at least one social link' });
-    }
 
     // Clean up links — trim whitespace
     const cleaned = {};

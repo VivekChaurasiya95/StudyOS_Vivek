@@ -879,7 +879,7 @@ const CalendarPage = () => {
                                       e.stopPropagation();
                                       openEditModal(ev);
                                     }}
-                                    className="p-1 rounded-lg opacity-0 group-hover:opacity-100 text-text-muted hover:text-primary hover:bg-surface transition-all"
+                                    className="p-1 rounded-lg opacity-100 md:opacity-0 md:group-hover:opacity-100 text-text-muted hover:text-primary hover:bg-surface transition-all"
                                   >
                                     <Edit3 size={14} />
                                   </button>
@@ -888,7 +888,7 @@ const CalendarPage = () => {
                                       e.stopPropagation();
                                       handleDeleteEvent(ev._id);
                                     }}
-                                    className="p-1 rounded-lg opacity-0 group-hover:opacity-100 text-text-muted hover:text-red-500 hover:bg-red-50 transition-all"
+                                    className="p-1 rounded-lg opacity-100 md:opacity-0 md:group-hover:opacity-100 text-text-muted hover:text-red-500 hover:bg-red-50 transition-all"
                                   >
                                     <Trash2 size={14} />
                                   </button>
@@ -1728,7 +1728,7 @@ const CalendarPage = () => {
                                   openEditModal(ev);
                                   setShowDayOverlay(false);
                                 }}
-                                className="p-1 rounded-lg opacity-0 group-hover:opacity-100 text-text-muted hover:text-primary hover:bg-surface transition-all"
+                                className="p-1 rounded-lg opacity-100 md:opacity-0 md:group-hover:opacity-100 text-text-muted hover:text-primary hover:bg-surface transition-all"
                               >
                                 <Edit3 size={14} />
                               </button>
@@ -1737,7 +1737,7 @@ const CalendarPage = () => {
                                   e.stopPropagation();
                                   handleDeleteEvent(ev._id);
                                 }}
-                                className="p-1 rounded-lg opacity-0 group-hover:opacity-100 text-text-muted hover:text-red-500 hover:bg-red-50 transition-all"
+                                className="p-1 rounded-lg opacity-100 md:opacity-0 md:group-hover:opacity-100 text-text-muted hover:text-red-500 hover:bg-red-50 transition-all"
                               >
                                 <Trash2 size={14} />
                               </button>

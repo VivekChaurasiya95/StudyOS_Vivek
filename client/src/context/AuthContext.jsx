@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { useDashboardStore } from '../store/dashboardStore';
 
 const AuthContext = createContext();
 
@@ -43,8 +44,8 @@ export const AuthProvider = ({ children }) => {
         return data;
     };
 
-    const register = async (username, email, password) => {
-        const { data } = await axios.post('/api/auth/register', { username, email, password });
+    const register = async (username, email, password, socialLinks) => {
+        const { data } = await axios.post('/api/auth/register', { username, email, password, socialLinks });
         localStorage.setItem('mantessa_logged_in', 'true');
         setUser(data);
         return data;
@@ -53,13 +54,18 @@ export const AuthProvider = ({ children }) => {
     const logout = async () => {
         await axios.post('/api/auth/logout');
         localStorage.removeItem('mantessa_logged_in');
+        useDashboardStore.getState().reset();
         setUser(null);
     };
 
-
+    const updateSocialLinks = async (socialLinks) => {
+        const { data } = await axios.put('/api/auth/social-links', socialLinks);
+        setUser(data);
+        return data;
+    };
 
     return (
-        <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+        <AuthContext.Provider value={{ user, setUser, login, register, logout, updateSocialLinks, loading }}>
             {!loading && children}
         </AuthContext.Provider>
     );

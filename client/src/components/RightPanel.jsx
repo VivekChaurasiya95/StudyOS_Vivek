@@ -24,9 +24,25 @@ import { useNavigate } from "react-router-dom";
 import { useThemeStore } from "../store/themeStore";
 import { useFocusStore } from "../store/focusStore";
 import { useNudgeStore } from "../store/nudgeStore";
+import { useDashboardStore } from "../store/dashboardStore";
 import PdfToolModal, { pdfTools } from "./PdfTools";
 import NudgesPanel from "./NudgesPanel";
-import axios from "axios";
+import ProfileLinksModal from "./ProfileLinksModal";
+import {
+  FaLinkedin,
+  FaGithub,
+  FaReddit,
+  FaDiscord,
+  FaQuora,
+} from "react-icons/fa";
+
+const socialIconsConfig = [
+  { key: "linkedin", icon: <FaLinkedin size={12} />, color: "#0077B5", label: "LinkedIn" },
+  { key: "github", icon: <FaGithub size={12} />, color: "#6e5494", label: "GitHub" },
+  { key: "reddit", icon: <FaReddit size={12} />, color: "#FF4500", label: "Reddit" },
+  { key: "discord", icon: <FaDiscord size={12} />, color: "#5865F2", label: "Discord" },
+  { key: "quora", icon: <FaQuora size={12} />, color: "#B92B27", label: "Quora" },
+];
 
 // --- Circular Progress Ring -------------------------------------------------
 const ProgressRing = ({
@@ -77,18 +93,28 @@ const RightPanel = ({ onClose }) => {
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [activeTool, setActiveTool] = useState(null);
+  const [showProfileModal, setShowProfileModal] = useState(false);
 
-  // Real stats from dashboard API
-  const [stats, setStats] = useState({
-    studyHours: 0,
-    todayHours: 0,
-    tasksDone: 0,
-    totalTasks: 0,
-    pendingTasks: 0,
-    currentStreak: 0,
-    focusScore: 0,
-  });
-  const [upcomingEvents, setUpcomingEvents] = useState([]);
+  // Shared dashboard store – single source of truth
+  const {
+    stats: dashStats,
+    totalTasks,
+    pendingTasks,
+    upcomingEvents,
+    fetch: fetchDashboard,
+    fetchIfStale,
+  } = useDashboardStore();
+
+  // Derived local aliases for template compatibility
+  const stats = {
+    studyHours: dashStats.studyHours,
+    todayHours: dashStats.todayHours,
+    tasksDone: dashStats.tasksDone,
+    totalTasks,
+    pendingTasks,
+    currentStreak: dashStats.currentStreak,
+    focusScore: dashStats.focusScore,
+  };
 
   useEffect(() => {
     document.body.classList.toggle("right-panel-closed", !isOpen);
@@ -108,7 +134,7 @@ const RightPanel = ({ onClose }) => {
   // Hydrate focus + fetch real stats on mount
   useEffect(() => {
     hydrateFocus();
-    fetchStats();
+    fetchIfStale();
   }, []);
 
   // Listen for fullscreen changes
@@ -130,31 +156,11 @@ const RightPanel = ({ onClose }) => {
     refreshNudges();
   }, []);
 
-  const fetchStats = async () => {
-    try {
-      const { data } = await axios.get("http://localhost:5000/api/dashboard", {
-        withCredentials: true,
-      });
-      setStats({
-        studyHours: data.stats?.studyHours || 0,
-        todayHours: data.stats?.todayHours || 0,
-        tasksDone: data.stats?.tasksDone || 0,
-        totalTasks: data.totalTasks || 0,
-        pendingTasks: data.pendingTasks || 0,
-        currentStreak: data.stats?.currentStreak || 0,
-        focusScore: data.stats?.focusScore || 0,
-      });
-      setUpcomingEvents(data.upcomingEvents || []);
-    } catch (err) {
-      // silently fail — panel still works without stats
-    }
-  };
-
   // Re-fetch stats when a focus session ends
   const prevFocusRef = useRef(focusActive);
   useEffect(() => {
     if (prevFocusRef.current && !focusActive) {
-      fetchStats();
+      fetchDashboard();
     }
     prevFocusRef.current = focusActive;
   }, [focusActive]);
@@ -233,6 +239,33 @@ const RightPanel = ({ onClose }) => {
               <p className="text-[11px] text-text-secondary font-medium">
                 {user?.email || "Pro Member"}
               </p>
+              {/* Social Link Icons */}
+              {user?.socialLinks &&
+                Object.values(user.socialLinks).some((v) => v) && (
+                  <div className="flex items-center gap-1.5 mt-1.5">
+                    {socialIconsConfig
+                      .filter((s) => user.socialLinks[s.key])
+                      .map((s) => {
+                        const val = user.socialLinks[s.key];
+                        const isLink = val.startsWith("http");
+                        const Tag = isLink ? "a" : "span";
+                        const props = isLink
+                          ? { href: val, target: "_blank", rel: "noopener noreferrer" }
+                          : {};
+                        return (
+                          <Tag
+                            key={s.key}
+                            {...props}
+                            title={isLink ? s.label : `${s.label}: ${val}`}
+                            className="w-5 h-5 rounded flex items-center justify-center transition-all hover:scale-110 cursor-pointer"
+                            style={{ backgroundColor: s.color + "20", color: s.color }}
+                          >
+                            {s.icon}
+                          </Tag>
+                        );
+                      })}
+                  </div>
+                )}
             </div>
           </div>
 
@@ -256,14 +289,26 @@ const RightPanel = ({ onClose }) => {
                   className="absolute right-0 top-10 w-48 bg-surface rounded-xl shadow-lg border border-border p-1.5 z-50 origin-top-right text-text-muted divide-y divide-border/50"
                 >
                   <div className="space-y-0.5 p-1">
-                    <button className="w-full flex items-center gap-3 px-3 py-2 text-xs font-medium hover:bg-surface-hover hover:text-text-main rounded-lg transition-colors group">
+                    <button
+                      onClick={() => {
+                        setShowProfileModal(true);
+                        setShowSettingsMenu(false);
+                      }}
+                      className="w-full flex items-center gap-3 px-3 py-2 text-xs font-medium hover:bg-surface-hover hover:text-text-main rounded-lg transition-colors group"
+                    >
                       <User
                         size={14}
                         className="group-hover:text-primary transition-colors"
                       />{" "}
-                      Profile
+                      Profile Links
                     </button>
-                    <button className="w-full flex items-center gap-3 px-3 py-2 text-xs font-medium hover:bg-surface-hover hover:text-text-main rounded-lg transition-colors group">
+                    <button
+                      onClick={() => {
+                        setShowProfileModal(true);
+                        setShowSettingsMenu(false);
+                      }}
+                      className="w-full flex items-center gap-3 px-3 py-2 text-xs font-medium hover:bg-surface-hover hover:text-text-main rounded-lg transition-colors group"
+                    >
                       <Edit3
                         size={14}
                         className="group-hover:text-primary transition-colors"
@@ -548,7 +593,7 @@ const RightPanel = ({ onClose }) => {
                   </div>
                   <ChevronRight
                     size={14}
-                    className="text-text-muted opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                    className="text-text-muted opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity shrink-0"
                   />
                 </button>
               ))}
@@ -615,6 +660,12 @@ const RightPanel = ({ onClose }) => {
 
       {/* Nudges Panel */}
       <NudgesPanel />
+
+      {/* Profile Links Modal */}
+      <ProfileLinksModal
+        isOpen={showProfileModal}
+        onClose={() => setShowProfileModal(false)}
+      />
     </>
   );
 };

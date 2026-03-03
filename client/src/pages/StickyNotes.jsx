@@ -546,12 +546,12 @@ const StickyNotes = () => {
             </div>
 
             {/* category pills */}
-            <div className="flex bg-background rounded-xl p-1 shadow-inner">
+            <div className="flex bg-background rounded-xl p-1 shadow-inner overflow-x-auto">
               {CATEGORIES.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                  className={`px-3 sm:px-4 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
                     activeCategory === cat
                       ? "bg-surface shadow-soft text-text-main"
                       : "text-text-muted hover:text-text-secondary"
@@ -642,7 +642,7 @@ const StickyNotes = () => {
                         </div>
 
                         {/* action buttons */}
-                        <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <div className="flex items-center gap-1.5 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200">
                           <button
                             onClick={() => openEditModal(note)}
                             className="p-1.5 rounded-lg hover:bg-surface/80 text-text-muted hover:text-primary transition-colors"
