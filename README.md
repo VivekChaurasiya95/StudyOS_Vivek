@@ -5,9 +5,11 @@
 ## ✨ Core Features
 
 ### 🖥️ Immersive Dashboard
+
 The central hub of your academic life, designed for immediate insight and action.
+
 - **Fluid Layout**: Dynamically expanding main content area that stretches intuitively when side panels are collapsed.
-- **Floating Navigation**: A sleek, icon-only vertical dock that expands on hover to reveal full navigation labels without disrupting the main view.
+- **Floating Navigation**: A sleek vertical dock that adapts to your screen size—expanding on desktop hover and compressing to an icon-only view on mobile for maximum content visibility.
 - **Focus Timer (Pomodoro)**: A built-in, distraction-free timer to manage study blocks. Includes progress rings for active sessions.
 - **Productivity Visualization**:
   - **Daily Goals**: Visual progress indicators tracking task completion.
@@ -15,7 +17,9 @@ The central hub of your academic life, designed for immediate insight and action
 - **Smart Greetings**: Personalized welcome messages with a snapshot of pending tasks and current productivity status.
 
 ### 🛠️ Integrated Productivity Suite
+
 Accessible instantly from the floating sidebar, these tools eliminate the need to switch apps:
+
 - **📅 Academic Calendar**: Drag-and-drop scheduling for exams, assignments, and study blocks.
 - **🧮 Scientific Calculator**: Embedded calculator for quick math, physics, and science computations without leaving the workspace.
 - **📝 Sticky Notes**: A digital scratchpad for quick ideas, reminders, and temporary data.
@@ -23,14 +27,16 @@ Accessible instantly from the floating sidebar, these tools eliminate the need t
 - **✅ Smart Todo Lists**: Advanced task management with priority levels (High, Medium, Low), categories, and status tracking.
 
 ### 🎨 UI & Design Language
+
 - **Modern SaaS Esthetics**: Clean, light theme relying on soft, neumorphism-inspired shadows (shadow-soft, shadow-inner) rather than harsh borders.
 - **Premium Typography**: Driven by **Plus Jakarta Sans** for crisp, highly legible data presentation.
 - **Micro-Interactions**: Smooth CSS transitions, dynamic flexbox DOM reflows (like w-80 to w-0 element collapsing), hover-expansion effects, and Framer Motion animations.
-- **Responsive Layout**: Highly responsive design with absolute/fixed mobile positioning and a collapsible right info panel.
+- **Responsive Layout**: Fully adaptive design featuring collapsible panels, mobile-optimized navigation, and full-width layouts on smaller screens to ensure a consistent experience across all devices.
 
 ## 🏗️ Technical Architecture
 
 ### Frontend (Client)
+
 - **Framework**: React 19 (via Vite) for blazing fast performance.
 - **Styling Engine**: **Tailwind CSS v4**.
   - Uses modern CSS-first configurations (@theme variables in index.css).
@@ -40,6 +46,7 @@ Accessible instantly from the floating sidebar, these tools eliminate the need t
 - **State Management**: React Context API (AuthContext) for global user state.
 
 ### Backend (Server)
+
 - **Runtime**: Node.js & Express.js.
 - **Database**: MongoDB (NoSQL) for flexible data storage of users, tasks, and notes.
 - **Authentication**: Secure JWT (JSON Web Token) implementation.
@@ -48,6 +55,7 @@ Accessible instantly from the floating sidebar, these tools eliminate the need t
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - **Node.js**: v18.0.0 or higher.
 - **MongoDB**: A running local instance or a cloud URI.
 - **Git**: For version control.
@@ -56,51 +64,50 @@ Accessible instantly from the floating sidebar, these tools eliminate the need t
 
 1. **Clone the Repository**
    `ash
-   git clone https://github.com/yourusername/StudyOS.git
-   cd StudyOS
-   `
+git clone https://github.com/yourusername/StudyOS.git
+cd StudyOS
+`
 
 2. **Install Dependencies**
-   
+
    **Client:**
    `ash
-   cd client
-   npm install
-   `
+cd client
+npm install
+`
 
    **Server:**
    `ash
-   cd ../server
-   npm install
-   `
+cd ../server
+npm install
+`
 
 3. **Environment Configuration**
    Create a .env file in the server/ directory:
    `env
-   PORT=5000
-   MONGO_URI=mongodb://localhost:27017/studyos
-   JWT_SECRET=your_super_secret_key_change_this
-   `
+PORT=5000
+MONGO_URI=mongodb://localhost:27017/studyos
+JWT_SECRET=your_super_secret_key_change_this
+`
 
 4. **Launch the Application**
    You will need two terminal windows.
 
    **Terminal 1 (Backend):**
    `ash
-   cd server
-   npm start
-   `
+cd server
+npm start
+`
 
    **Terminal 2 (Frontend):**
    `ash
-   cd client
-   npm run dev
-   `
+cd client
+npm run dev
+`
 
 ## 📂 Folder Structure
 
-`
-StudyOS/
+`StudyOS/
 ├── client/                     # React Frontend Application
 │   ├── public/                 # Static assets
 │   ├── src/
@@ -123,8 +130,7 @@ StudyOS/
     ├── middleware/             # Auth & Error middlewares
     ├── models/                 # Mongoose Data Schemas
     ├── routes/                 # API Routes
-    └── index.js                # Server Entry & Config
-`
+    └── index.js                # Server Entry & Config`
 
 ## 🤝 Contributing
 
@@ -138,4 +144,4 @@ Contributions are welcome! Please fork the repository and submit a pull request.
 
 ---
 
-*Built with ❤️ for the academic community.*
+_Built with ❤️ for the academic community._

@@ -87,7 +87,7 @@ const Sidebar = ({ onMobileClose }) => {
   const currentPath = window.location.pathname;
 
   return (
-    <aside className="w-20 hover:w-64 bg-surface h-full flex flex-col justify-between py-6 z-50 overflow-hidden custom-scrollbar shadow-card transition-all duration-300 ease-in-out group absolute md:fixed border-r border-border">
+    <aside className="w-20 md:hover:w-64 bg-surface h-full flex flex-col justify-between py-6 z-50 overflow-hidden custom-scrollbar shadow-card transition-all duration-300 ease-in-out group border-r border-border">
       {/* Logo Area */}
       <div className="flex flex-col gap-6 w-full px-4">
         <div

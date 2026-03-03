@@ -467,9 +467,9 @@ const Dashboard = () => {
 
       {/* Right Panel Wrapper */}
       <div
-        className={`fixed inset-y-0 right-0 z-50 transform transition-transform duration-300 ease-in-out xl:relative xl:transform-none xl:translate-x-0 ${isRightPanelOpen ? "translate-x-0" : "translate-x-full"}`}
+        className={`fixed inset-y-0 right-0 z-50 w-full sm:w-80 transform transition-transform duration-300 ease-in-out xl:relative xl:transform-none xl:translate-x-0 shrink-0 ${isRightPanelOpen ? "translate-x-0" : "translate-x-full"}`}
       >
-        <RightPanel />
+        <RightPanel onClose={() => setIsRightPanelOpen(false)} />
       </div>
 
       {/* Nudges Panel */}

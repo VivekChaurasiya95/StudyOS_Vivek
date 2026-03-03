@@ -67,7 +67,7 @@ const ProgressRing = ({
 };
 
 // --- Main Right Panel -------------------------------------------------------
-const RightPanel = () => {
+const RightPanel = ({ onClose }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { isDarkMode, toggleDarkMode } = useThemeStore();
@@ -180,7 +180,7 @@ const RightPanel = () => {
     <>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed top-1/2 -translate-y-1/2 z-[60] bg-surface w-8 h-16 flex items-center justify-center rounded-l-2xl shadow-[0_4px_14px_rgba(0,0,0,0.05)] border border-border border-r-0 transition-all duration-300 ${isOpen ? "right-80" : "right-0"}`}
+        className={`fixed top-1/2 -translate-y-1/2 z-[60] bg-surface w-8 h-16 flex items-center justify-center rounded-l-2xl shadow-[0_4px_14px_rgba(0,0,0,0.05)] border border-border border-r-0 transition-all duration-300 ${isOpen ? "right-80" : "right-0"} hidden xl:flex`}
         title="Toggle Panel"
       >
         <div
@@ -188,8 +188,21 @@ const RightPanel = () => {
         />
       </button>
       <aside
-        className={`bg-surface h-full flex flex-col gap-5 py-6 z-40 border-l border-border overflow-y-auto overflow-x-hidden custom-scrollbar transition-all duration-300 ease-in-out ${isOpen ? "w-80 px-5 opacity-100" : "w-0 px-0 border-none opacity-0"}`}
+        className={`bg-surface h-full flex flex-col gap-5 py-6 z-40 border-l border-border overflow-y-auto overflow-x-hidden custom-scrollbar transition-all duration-300 ease-in-out ${isOpen ? "w-full sm:w-80 px-5 opacity-100" : "w-full sm:w-80 px-5 opacity-100 xl:w-0 xl:px-0 xl:border-none xl:opacity-0"}`}
       >
+        {/* Mobile Header with Close Button */}
+        <div className="flex xl:hidden justify-between items-center mb-2">
+          <h2 className="text-lg font-bold text-text-main">Panel</h2>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="p-2 -mr-2 text-text-secondary hover:text-text-main hover:bg-surface-hover rounded-lg transition-colors"
+            >
+              <ChevronRight size={24} />
+            </button>
+          )}
+        </div>
+
         {/* ── 1. User Profile & Settings ── */}
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-3 cursor-pointer group">
@@ -260,7 +273,7 @@ const RightPanel = () => {
 
         {/* ── 2. Focus Timer Card ── */}
         <div
-          className="card relative overflow-hidden bg-primary/10 cursor-pointer transition-all duration-300"
+          className="card relative bg-primary/10 cursor-pointer transition-all duration-300"
           onClick={() => !focusActive && toggleFocus()}
         >
           {/* State 1: Collapsed — just "Focus Session" label */}

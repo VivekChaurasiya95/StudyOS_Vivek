@@ -168,9 +168,9 @@ const Subjects = () => {
         />
       )}
       <div
-        className={`fixed inset-y-0 right-0 z-50 transform transition-transform duration-300 ease-in-out xl:translate-x-0 ${isRightPanelOpen ? "translate-x-0" : "translate-x-full xl:translate-x-0"}`}
+        className={`fixed inset-y-0 right-0 z-50 w-full sm:w-80 transform transition-transform duration-300 ease-in-out xl:translate-x-0 ${isRightPanelOpen ? "translate-x-0" : "translate-x-full xl:translate-x-0"}`}
       >
-        <RightPanel />
+        <RightPanel onClose={() => setIsRightPanelOpen(false)} />
       </div>
 
       <main className="flex-1 md:ml-20 xl:mr-80 p-4 md:p-8 overflow-y-auto h-screen relative z-0">

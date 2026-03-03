@@ -287,9 +287,9 @@ const Calculator = () => {
 
       {/* Right Panel */}
       <div
-        className={`fixed inset-y-0 right-0 z-50 w-80 transform transition-transform duration-300 ease-in-out xl:translate-x-0 ${isRightPanelOpen ? "translate-x-0" : "translate-x-full"}`}
+        className={`fixed inset-y-0 right-0 z-50 w-full sm:w-80 transform transition-transform duration-300 ease-in-out xl:translate-x-0 ${isRightPanelOpen ? "translate-x-0" : "translate-x-full"}`}
       >
-        <RightPanel />
+        <RightPanel onClose={() => setIsRightPanelOpen(false)} />
       </div>
 
       {/* Main Content Area Wrapper */}
