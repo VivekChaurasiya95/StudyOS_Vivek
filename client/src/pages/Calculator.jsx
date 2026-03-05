@@ -4,7 +4,7 @@ import Sidebar from "../components/Sidebar";
 import RightPanel from "../components/RightPanel";
 import { useAuth } from "../context/AuthContext";
 import { useLayoutStore } from "../store/layoutStore";
-import { History, Menu, Delete, Filter } from "lucide-react";
+import { History, Menu, Delete, Filter, PanelRightOpen, PanelRightClose } from "lucide-react";
 
 const API = "http://localhost:5000/api/calculator";
 const axiosCfg = { withCredentials: true };
@@ -57,7 +57,7 @@ const timeAgo = (dateStr) => {
 
 const Calculator = () => {
   const { user } = useAuth();
-  const { isRightPanelOpen: isRightPanelOpenDesktop } = useLayoutStore();
+  const { isRightPanelOpen: isRightPanelOpenDesktop, toggleRightPanel } = useLayoutStore();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(false);
   const [scientificMode, setScientificMode] = useState(true);
@@ -287,13 +287,6 @@ const Calculator = () => {
         />
       )}
 
-      {/* Right Panel */}
-      <div
-        className={`fixed inset-y-0 right-0 z-50 w-full sm:w-80 transform transition-transform duration-300 ease-in-out shrink-0 ${isRightPanelOpen ? "translate-x-0" : "translate-x-full"} ${isRightPanelOpenDesktop ? "xl:relative xl:transform-none xl:translate-x-0" : "xl:fixed xl:translate-x-full"}`}
-      >
-        <RightPanel onClose={() => setIsRightPanelOpen(false)} />
-      </div>
-
       {/* Main Content Area Wrapper */}
       <div className={`flex-1 flex flex-col md:ml-20 min-h-screen relative transition-all duration-300 z-10 ${isRightPanelOpenDesktop ? 'xl:mr-80' : 'xl:mr-0'}`}>
         {/* Main Content */}
@@ -322,6 +315,13 @@ const Calculator = () => {
                 className="p-2 bg-surface rounded-xl text-text-secondary hover:text-primary transition-colors border border-border/50 xl:hidden"
               >
                 <Filter size={20} />
+              </button>
+              <button
+                onClick={toggleRightPanel}
+                className="hidden xl:flex p-2 bg-surface rounded-xl text-text-secondary hover:text-primary transition-colors border border-border/50"
+                title={isRightPanelOpenDesktop ? "Close Right Panel" : "Open Right Panel"}
+              >
+                {isRightPanelOpenDesktop ? <PanelRightClose size={20} /> : <PanelRightOpen size={20} />}
               </button>
               <div className="hidden sm:flex items-center gap-2 bg-surface px-4 py-2 rounded-full shadow-sm border border-border/50">
                 <div className="w-2 h-2 bg-primary rounded-full"></div>
@@ -473,6 +473,13 @@ const Calculator = () => {
             </div>
           </div>
         </main>
+      </div>
+
+      {/* Right Panel */}
+      <div
+        className={`fixed inset-y-0 right-0 z-50 w-full sm:w-80 transform transition-transform duration-300 ease-in-out shrink-0 ${isRightPanelOpen ? "translate-x-0" : "translate-x-full"} ${isRightPanelOpenDesktop ? "xl:relative xl:transform-none xl:translate-x-0" : "xl:fixed xl:translate-x-full"}`}
+      >
+        <RightPanel onClose={() => setIsRightPanelOpen(false)} />
       </div>
     </div>
   );

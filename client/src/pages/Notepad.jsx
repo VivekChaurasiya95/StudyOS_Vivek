@@ -43,6 +43,8 @@ import {
   CheckSquare,
   Square,
   Trash,
+  PanelRightOpen,
+  PanelRightClose,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -117,7 +119,7 @@ const CodeBlock = ({ block, onChange, onDelete }) => (
 /* ══════════════ Notepad ══════════════ */
 const Notepad = () => {
   const { user } = useAuth();
-  const { isRightPanelOpen: isRightPanelOpenDesktop } = useLayoutStore();
+  const { isRightPanelOpen: isRightPanelOpenDesktop, toggleRightPanel } = useLayoutStore();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(false);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
@@ -1400,6 +1402,13 @@ const Notepad = () => {
                 title="Panel"
               >
                 <Eye size={16} />
+              </button>
+              <button
+                onClick={toggleRightPanel}
+                className="hidden xl:flex p-2 text-text-muted hover:text-primary transition-colors"
+                title={isRightPanelOpenDesktop ? "Close Right Panel" : "Open Right Panel"}
+              >
+                {isRightPanelOpenDesktop ? <PanelRightClose size={16} /> : <PanelRightOpen size={16} />}
               </button>
             </div>
           </header>

@@ -16,6 +16,8 @@ import {
   X,
   Menu,
   Sparkles,
+  PanelRightOpen,
+  PanelRightClose,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -30,7 +32,7 @@ const axiosCfg = { withCredentials: true };
 const Subjects = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { isRightPanelOpen: isRightPanelOpenDesktop } = useLayoutStore();
+  const { isRightPanelOpen: isRightPanelOpenDesktop, toggleRightPanel } = useLayoutStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
   const [selectedSubject, setSelectedSubject] = useState(null);
@@ -223,6 +225,13 @@ const Subjects = () => {
                   {nudgeCount > 9 ? "9+" : nudgeCount}
                 </span>
               )}
+            </button>
+            <button
+              onClick={toggleRightPanel}
+              className="p-2 text-text-secondary hover:text-primary transition-colors hover:bg-surface-hover rounded-xl shadow-inner border border-transparent hover:border-border/50"
+              title={isRightPanelOpenDesktop ? "Close Right Panel" : "Open Right Panel"}
+            >
+              {isRightPanelOpenDesktop ? <PanelRightClose size={24} /> : <PanelRightOpen size={24} />}
             </button>
             <div className="flex items-center gap-3 pl-6 border-l border-border/50">
               <div className="text-right hidden lg:block">

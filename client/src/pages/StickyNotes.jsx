@@ -27,6 +27,8 @@ import {
   FileText,
   Loader2,
   Sparkles,
+  PanelRightOpen,
+  PanelRightClose,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useThemeStore } from "../store/themeStore";
@@ -150,7 +152,7 @@ const getPalette = (isDark) => ({
 const StickyNotes = () => {
   const { user } = useAuth();
   const { isDarkMode } = useThemeStore();
-  const { isRightPanelOpen: isRightPanelOpenDesktop } = useLayoutStore();
+  const { isRightPanelOpen: isRightPanelOpenDesktop, toggleRightPanel } = useLayoutStore();
   const [activeCategory, setActiveCategory] = useState("All");
   const [notes, setNotes] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -519,6 +521,13 @@ const StickyNotes = () => {
                   {nudgeCount > 9 ? "9+" : nudgeCount}
                 </span>
               )}
+            </button>
+            <button
+              onClick={toggleRightPanel}
+              className="p-3 bg-surface rounded-xl text-text-secondary hover:text-primary hover:shadow-soft transition-all duration-200 border border-transparent hover:border-border/50"
+              title={isRightPanelOpenDesktop ? "Close Right Panel" : "Open Right Panel"}
+            >
+              {isRightPanelOpenDesktop ? <PanelRightClose size={22} /> : <PanelRightOpen size={22} />}
             </button>
             <div className="flex items-center gap-4 pl-8 border-l border-border/60">
               <div className="text-right hidden lg:block">

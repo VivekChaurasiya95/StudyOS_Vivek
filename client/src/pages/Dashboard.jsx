@@ -15,6 +15,8 @@ import {
   Play,
   Loader2,
   Sparkles,
+  PanelRightOpen,
+  PanelRightClose,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
@@ -31,7 +33,7 @@ const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(false);
-  const { isRightPanelOpen: isRightPanelOpenDesktop } = useLayoutStore();
+  const { isRightPanelOpen: isRightPanelOpenDesktop, toggleRightPanel } = useLayoutStore();
 
   const {
     toggleOpen: toggleNudges,
@@ -110,7 +112,7 @@ const Dashboard = () => {
       </div>
 
       {/* Main Content Area */}
-      <main className="flex-1 md:ml-20 main-content right-panel-transition p-4 md:p-8 overflow-y-auto overflow-x-hidden h-screen relative z-0">
+      <main className={`flex-1 md:ml-20 main-content right-panel-transition p-4 md:p-8 overflow-y-auto overflow-x-hidden h-screen relative z-0 ${isRightPanelOpenDesktop ? 'xl:mr-80' : 'xl:mr-0'}`}>
         {/* Header */}
         <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           {/* Mobile Menu Button */}
@@ -158,6 +160,14 @@ const Dashboard = () => {
                   {nudgeCount > 9 ? "9+" : nudgeCount}
                 </span>
               )}
+            </button>
+
+            <button
+              onClick={toggleRightPanel}
+              className="p-3 bg-surface rounded-xl text-text-secondary hover:text-primary hover:bg-white/5 hover:shadow-soft transition-all duration-200 border border-transparent hover:border-border/50"
+              title={isRightPanelOpenDesktop ? "Close Right Panel" : "Open Right Panel"}
+            >
+              {isRightPanelOpenDesktop ? <PanelRightClose size={22} /> : <PanelRightOpen size={22} />}
             </button>
 
             <div className="flex items-center gap-4 pl-8 border-l border-border/60">

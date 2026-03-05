@@ -28,6 +28,8 @@ import {
   Search,
   BarChart3,
   Zap,
+  PanelRightOpen,
+  PanelRightClose,
 } from "lucide-react";
 
 const API = "http://localhost:5000/api/tasks";
@@ -425,7 +427,7 @@ const Column = ({ columnId, tasks, moveTask, deleteTask, onAdd }) => {
 
 /* ═══════════════ TodoList ═══════════════ */
 const TodoList = () => {
-  const { isRightPanelOpen: isRightPanelOpenDesktop } = useLayoutStore();
+  const { isRightPanelOpen: isRightPanelOpenDesktop, toggleRightPanel } = useLayoutStore();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(false);
   const [tasks, setTasks] = useState({
@@ -633,6 +635,13 @@ const TodoList = () => {
                 className="p-2 bg-surface rounded-xl text-text-secondary hover:text-primary transition-colors border border-border/50 xl:hidden ml-auto md:hidden"
               >
                 <Filter size={20} />
+              </button>
+              <button
+                onClick={toggleRightPanel}
+                className="hidden xl:flex p-2 bg-surface rounded-xl text-text-secondary hover:text-primary transition-colors border border-border/50 ml-auto md:ml-0"
+                title={isRightPanelOpenDesktop ? "Close Right Panel" : "Open Right Panel"}
+              >
+                {isRightPanelOpenDesktop ? <PanelRightClose size={20} /> : <PanelRightOpen size={20} />}
               </button>
             </div>
 

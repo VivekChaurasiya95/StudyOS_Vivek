@@ -21,6 +21,8 @@ import {
   Settings,
   Filter,
   Sparkles,
+  PanelRightOpen,
+  PanelRightClose,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useNudgeStore } from "../store/nudgeStore";
@@ -190,7 +192,7 @@ const HOURS = Array.from({ length: 24 }, (_, i) => {
 
 const CalendarPage = () => {
   const { user } = useAuth();
-  const { isRightPanelOpen: isRightPanelOpenDesktop } = useLayoutStore();
+  const { isRightPanelOpen: isRightPanelOpenDesktop, toggleRightPanel } = useLayoutStore();
   const [view, setView] = useState("Month");
   const [searchQuery, setSearchQuery] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -738,6 +740,13 @@ const CalendarPage = () => {
                   </div>
                 )}
               </div>
+              <button
+                onClick={toggleRightPanel}
+                className="p-3 bg-surface rounded-xl text-text-secondary hover:text-primary hover:shadow-soft transition-all duration-200 border border-transparent hover:border-border/50"
+                title={isRightPanelOpenDesktop ? "Close Right Panel" : "Open Right Panel"}
+              >
+                {isRightPanelOpenDesktop ? <PanelRightClose size={22} /> : <PanelRightOpen size={22} />}
+              </button>
               <div className="flex items-center gap-4 pl-4 border-l border-border/60">
                 <div className="text-right hidden lg:block">
                   <p className="text-sm font-bold text-text-main tracking-tight">
@@ -2150,14 +2159,6 @@ const CalendarPage = () => {
             </div>
           </div>
         </div>
-      )}
-
-      {/* Mobile RightPanel Overlay */}
-      {isRightPanelOpen && (
-        <div
-          onClick={() => setIsRightPanelOpen(false)}
-          className="fixed inset-0 bg-black/60 z-40 xl:hidden backdrop-blur-sm"
-        />
       )}
 
       {/* Right Panel */}
