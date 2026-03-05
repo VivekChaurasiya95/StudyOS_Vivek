@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }) => {
             } catch (error) {
                 if (error.response?.status === 401) {
                     localStorage.removeItem('mantessa_logged_in');
+                    localStorage.removeItem('mantessa_token');
                 } else {
                     console.error('Initial auth check failed:', error);
                 }
@@ -40,6 +41,7 @@ export const AuthProvider = ({ children }) => {
     const login = async (email, password) => {
         const { data } = await axios.post('/api/auth/login', { email, password });
         localStorage.setItem('mantessa_logged_in', 'true');
+        if (data.token) localStorage.setItem('mantessa_token', data.token);
         setUser(data);
         return data;
     };
@@ -47,6 +49,7 @@ export const AuthProvider = ({ children }) => {
     const register = async (username, email, password, socialLinks, avatar) => {
         const { data } = await axios.post('/api/auth/register', { username, email, password, socialLinks, avatar });
         localStorage.setItem('mantessa_logged_in', 'true');
+        if (data.token) localStorage.setItem('mantessa_token', data.token);
         setUser(data);
         return data;
     };
@@ -54,6 +57,7 @@ export const AuthProvider = ({ children }) => {
     const logout = async () => {
         await axios.post('/api/auth/logout');
         localStorage.removeItem('mantessa_logged_in');
+        localStorage.removeItem('mantessa_token');
         useDashboardStore.getState().reset();
         setUser(null);
     };
