@@ -5,6 +5,7 @@ import Sidebar from "../components/Sidebar";
 import RightPanel from "../components/RightPanel";
 import { useAuth } from "../context/AuthContext";
 import { useSocket } from "../hooks/useSocket";
+import { useLayoutStore } from "../store/layoutStore";
 import {
   Bold,
   Italic,
@@ -116,6 +117,7 @@ const CodeBlock = ({ block, onChange, onDelete }) => (
 /* ══════════════ Notepad ══════════════ */
 const Notepad = () => {
   const { user } = useAuth();
+  const { isRightPanelOpen: isRightPanelOpenDesktop } = useLayoutStore();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(false);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
@@ -1017,23 +1019,8 @@ const Notepad = () => {
         <Sidebar onMobileClose={() => setIsSidebarOpen(false)} />
       </div>
 
-      {/* Mobile RightPanel Overlay */}
-      {isRightPanelOpen && (
-        <div
-          onClick={() => setIsRightPanelOpen(false)}
-          className="fixed inset-0 bg-black/60 z-40 xl:hidden backdrop-blur-sm"
-        />
-      )}
-
-      {/* right panel */}
-      <div
-        className={`fixed inset-y-0 right-0 z-50 w-full sm:w-80 transform transition-transform duration-300 ease-in-out xl:translate-x-0 ${isRightPanelOpen ? "translate-x-0" : "translate-x-full"}`}
-      >
-        <RightPanel onClose={() => setIsRightPanelOpen(false)} />
-      </div>
-
       {/* ─── main area ─── */}
-      <div className="flex-1 md:ml-20 xl:mr-80 main-content right-panel-transition flex h-screen overflow-hidden">
+      <div className={`flex-1 md:ml-20 main-content right-panel-transition flex h-screen overflow-hidden ${isRightPanelOpenDesktop ? 'xl:mr-80' : 'xl:mr-0'}`}>
         {/* Mobile Library Overlay */}
         {isLibraryOpen && (
           <div
@@ -1052,7 +1039,7 @@ const Notepad = () => {
 
         {/* ─── library sidebar ─── */}
         <aside
-          className={`fixed inset-y-0 left-0 z-40 w-64 border-r border-border bg-surface/95 backdrop-blur-md flex-col shrink-0 overflow-y-auto transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 lg:flex ${isLibraryOpen ? "translate-x-0 flex" : "-translate-x-full hidden lg:flex"}`}
+          className={`fixed inset-y-0 left-0 z-40 w-64 lg:w-60 xl:w-56 border-r border-border bg-surface/95 backdrop-blur-md flex-col shrink-0 overflow-y-auto transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 lg:flex ${isLibraryOpen ? "translate-x-0 flex" : "-translate-x-full hidden lg:flex"}`}
         >
           <div className="p-6 flex flex-col h-full">
             {/* Mobile close + heading */}
@@ -1418,8 +1405,8 @@ const Notepad = () => {
           </header>
 
           {/* blocks content */}
-          <div className="flex-1 overflow-y-auto px-4 py-8 sm:px-6 md:px-10 lg:px-6 xl:px-8 2xl:px-16">
-            <div className="max-w-3xl mx-auto">
+          <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 md:px-8 lg:px-8 xl:px-8 2xl:px-12">
+            <div className="max-w-3xl lg:max-w-none mx-auto">
               {/* title */}
               <input
                 type="text"
@@ -1541,7 +1528,7 @@ const Notepad = () => {
 
         {/* ─── document info sidebar (enhanced) ─── */}
         <aside
-          className={`fixed inset-y-0 right-0 z-40 w-72 border-l border-border bg-background/95 backdrop-blur-md flex-col shrink-0 overflow-y-auto p-4 gap-4 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 lg:flex lg:w-60 xl:w-64 2xl:w-72 lg:bg-background/50 lg:backdrop-blur-none ${
+          className={`fixed inset-y-0 right-0 z-40 w-72 border-l border-border bg-background/95 backdrop-blur-md flex-col shrink-0 overflow-y-auto p-3 gap-3 lg:p-4 lg:gap-4 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 lg:flex lg:w-56 xl:w-52 2xl:w-60 lg:bg-background/50 lg:backdrop-blur-none ${
             isDocInfoOpen ? "translate-x-0 flex" : "translate-x-full hidden lg:flex"
           }`}
         >
@@ -1855,6 +1842,21 @@ const Notepad = () => {
             </button>
           </motion.div>
         </aside>
+      </div>
+
+      {/* Mobile RightPanel Overlay */}
+      {isRightPanelOpen && (
+        <div
+          onClick={() => setIsRightPanelOpen(false)}
+          className="fixed inset-0 bg-black/60 z-40 xl:hidden backdrop-blur-sm transition-opacity"
+        />
+      )}
+
+      {/* Right Panel Wrapper */}
+      <div
+        className={`fixed inset-y-0 right-0 z-50 w-full sm:w-80 transform transition-transform duration-300 ease-in-out shrink-0 ${isRightPanelOpen ? "translate-x-0" : "translate-x-full"} ${isRightPanelOpenDesktop ? "xl:relative xl:transform-none xl:translate-x-0" : "xl:fixed xl:translate-x-full"}`}
+      >
+        <RightPanel onClose={() => setIsRightPanelOpen(false)} />
       </div>
 
       {/* ─── Link Modal ─── */}

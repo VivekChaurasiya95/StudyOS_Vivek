@@ -3,6 +3,7 @@ import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import RightPanel from "../components/RightPanel";
 import { useAuth } from "../context/AuthContext";
+import { useLayoutStore } from "../store/layoutStore";
 import { History, Menu, Delete, Filter } from "lucide-react";
 
 const API = "http://localhost:5000/api/calculator";
@@ -56,6 +57,7 @@ const timeAgo = (dateStr) => {
 
 const Calculator = () => {
   const { user } = useAuth();
+  const { isRightPanelOpen: isRightPanelOpenDesktop } = useLayoutStore();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(false);
   const [scientificMode, setScientificMode] = useState(true);
@@ -287,13 +289,13 @@ const Calculator = () => {
 
       {/* Right Panel */}
       <div
-        className={`fixed inset-y-0 right-0 z-50 w-full sm:w-80 transform transition-transform duration-300 ease-in-out xl:translate-x-0 ${isRightPanelOpen ? "translate-x-0" : "translate-x-full"}`}
+        className={`fixed inset-y-0 right-0 z-50 w-full sm:w-80 transform transition-transform duration-300 ease-in-out shrink-0 ${isRightPanelOpen ? "translate-x-0" : "translate-x-full"} ${isRightPanelOpenDesktop ? "xl:relative xl:transform-none xl:translate-x-0" : "xl:fixed xl:translate-x-full"}`}
       >
         <RightPanel onClose={() => setIsRightPanelOpen(false)} />
       </div>
 
       {/* Main Content Area Wrapper */}
-      <div className="flex-1 flex flex-col md:ml-20 xl:mr-80 min-h-screen relative transition-all duration-300 z-10">
+      <div className={`flex-1 flex flex-col md:ml-20 min-h-screen relative transition-all duration-300 z-10 ${isRightPanelOpenDesktop ? 'xl:mr-80' : 'xl:mr-0'}`}>
         {/* Main Content */}
         <main className="flex-1 p-4 sm:p-6 md:p-8 overflow-y-auto w-full max-w-[1400px] mx-auto space-y-6 sm:space-y-8">
           {/* Header */}

@@ -3,6 +3,8 @@ import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import RightPanel from "../components/RightPanel";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "../context/AuthContext";
+import { useLayoutStore } from "../store/layoutStore";
 import {
   Menu,
   Plus,
@@ -423,6 +425,7 @@ const Column = ({ columnId, tasks, moveTask, deleteTask, onAdd }) => {
 
 /* ═══════════════ TodoList ═══════════════ */
 const TodoList = () => {
+  const { isRightPanelOpen: isRightPanelOpenDesktop } = useLayoutStore();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(false);
   const [tasks, setTasks] = useState({
@@ -606,7 +609,7 @@ const TodoList = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col md:ml-20 xl:mr-80 min-h-screen relative transition-all duration-300 z-10">
+      <div className={`flex-1 flex flex-col md:ml-20 min-h-screen relative transition-all duration-300 z-10 ${isRightPanelOpenDesktop ? 'xl:mr-80' : 'xl:mr-0'}`}>
         <main className="flex-1 p-5 md:p-7 overflow-y-auto w-full mx-auto max-w-[1400px] h-screen flex flex-col">
           {/* ── Header ── */}
           <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 shrink-0">
@@ -903,7 +906,7 @@ const TodoList = () => {
 
       {/* Right Panel */}
       <div
-        className={`fixed inset-y-0 right-0 z-50 w-full sm:w-80 transform transition-transform duration-300 ease-in-out xl:translate-x-0 ${isRightPanelOpen ? "translate-x-0" : "translate-x-full"}`}
+        className={`fixed inset-y-0 right-0 z-50 w-full sm:w-80 transform transition-transform duration-300 ease-in-out shrink-0 ${isRightPanelOpen ? "translate-x-0" : "translate-x-full"} ${isRightPanelOpenDesktop ? "xl:relative xl:transform-none xl:translate-x-0" : "xl:fixed xl:translate-x-full"}`}
       >
         <RightPanel onClose={() => setIsRightPanelOpen(false)} />
       </div>

@@ -31,6 +31,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { useThemeStore } from "../store/themeStore";
 import { useNudgeStore } from "../store/nudgeStore";
+import { useLayoutStore } from "../store/layoutStore";
 import NudgesPanel from "../components/NudgesPanel";
 
 const API = "http://localhost:5000/api/notes";
@@ -149,6 +150,7 @@ const getPalette = (isDark) => ({
 const StickyNotes = () => {
   const { user } = useAuth();
   const { isDarkMode } = useThemeStore();
+  const { isRightPanelOpen: isRightPanelOpenDesktop } = useLayoutStore();
   const [activeCategory, setActiveCategory] = useState("All");
   const [notes, setNotes] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -461,13 +463,13 @@ const StickyNotes = () => {
 
       {/* right panel */}
       <div
-        className={`fixed inset-y-0 right-0 z-50 w-full sm:w-80 transform transition-transform duration-300 ease-in-out xl:translate-x-0 ${isRightPanelOpen ? "translate-x-0" : "translate-x-full"}`}
+        className={`fixed inset-y-0 right-0 z-50 w-full sm:w-80 transform transition-transform duration-300 ease-in-out shrink-0 ${isRightPanelOpen ? "translate-x-0" : "translate-x-full"} ${isRightPanelOpenDesktop ? "xl:relative xl:transform-none xl:translate-x-0" : "xl:fixed xl:translate-x-full"}`}
       >
         <RightPanel onClose={() => setIsRightPanelOpen(false)} />
       </div>
 
       {/* main content */}
-      <main className="flex-1 md:ml-20 xl:mr-80 main-content right-panel-transition p-4 md:p-8 overflow-y-auto h-screen relative z-0">
+      <main className={`flex-1 md:ml-20 main-content right-panel-transition p-4 md:p-8 overflow-y-auto h-screen relative z-0 ${isRightPanelOpenDesktop ? 'xl:mr-80' : 'xl:mr-0'}`}>
         {/* ── header ── */}
         <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           {/* mobile top bar */}

@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useNudgeStore } from "../store/nudgeStore";
+import { useLayoutStore } from "../store/layoutStore";
 import NudgesPanel from "../components/NudgesPanel";
 
 const API = "http://localhost:5000/api/events";
@@ -189,6 +190,7 @@ const HOURS = Array.from({ length: 24 }, (_, i) => {
 
 const CalendarPage = () => {
   const { user } = useAuth();
+  const { isRightPanelOpen: isRightPanelOpenDesktop } = useLayoutStore();
   const [view, setView] = useState("Month");
   const [searchQuery, setSearchQuery] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -544,7 +546,7 @@ const CalendarPage = () => {
       </div>
 
       {/* Main */}
-      <div className="flex-1 flex flex-col md:ml-20 xl:mr-80 min-h-screen relative transition-all duration-300 z-10">
+      <div className={`flex-1 flex flex-col md:ml-20 min-h-screen relative transition-all duration-300 z-10 ${isRightPanelOpenDesktop ? 'xl:mr-80' : 'xl:mr-0'}`}>
         <main className="flex-1 p-4 md:p-8 overflow-y-auto w-full max-w-7xl mx-auto space-y-8">
           {/* Header */}
           <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -2160,7 +2162,7 @@ const CalendarPage = () => {
 
       {/* Right Panel */}
       <div
-        className={`fixed inset-y-0 right-0 z-50 w-full sm:w-80 transform transition-transform duration-300 ease-in-out xl:translate-x-0 ${isRightPanelOpen ? "translate-x-0" : "translate-x-full"}`}
+        className={`fixed inset-y-0 right-0 z-50 w-full sm:w-80 transform transition-transform duration-300 ease-in-out shrink-0 ${isRightPanelOpen ? "translate-x-0" : "translate-x-full"} ${isRightPanelOpenDesktop ? "xl:relative xl:transform-none xl:translate-x-0" : "xl:fixed xl:translate-x-full"}`}
       >
         <RightPanel onClose={() => setIsRightPanelOpen(false)} />
       </div>

@@ -22,6 +22,7 @@ import { useNavigate } from "react-router-dom";
 import { useFocusStore } from "../store/focusStore";
 import { useNudgeStore } from "../store/nudgeStore";
 import { useDashboardStore } from "../store/dashboardStore";
+import { useLayoutStore } from "../store/layoutStore";
 
 
 const Dashboard = () => {
@@ -30,6 +31,7 @@ const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(false);
+  const { isRightPanelOpen: isRightPanelOpenDesktop } = useLayoutStore();
 
   const {
     toggleOpen: toggleNudges,
@@ -459,7 +461,7 @@ const Dashboard = () => {
 
       {/* Right Panel Wrapper */}
       <div
-        className={`fixed inset-y-0 right-0 z-50 w-full sm:w-80 transform transition-transform duration-300 ease-in-out xl:relative xl:transform-none xl:translate-x-0 shrink-0 ${isRightPanelOpen ? "translate-x-0" : "translate-x-full"}`}
+        className={`fixed inset-y-0 right-0 z-50 w-full sm:w-80 transform transition-transform duration-300 ease-in-out shrink-0 ${isRightPanelOpen ? "translate-x-0" : "translate-x-full"} ${isRightPanelOpenDesktop ? "xl:relative xl:transform-none xl:translate-x-0" : "xl:fixed xl:translate-x-full"}`}
       >
         <RightPanel onClose={() => setIsRightPanelOpen(false)} />
       </div>

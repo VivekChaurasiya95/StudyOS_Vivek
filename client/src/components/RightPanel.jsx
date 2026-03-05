@@ -25,6 +25,7 @@ import { useThemeStore } from "../store/themeStore";
 import { useFocusStore } from "../store/focusStore";
 import { useNudgeStore } from "../store/nudgeStore";
 import { useDashboardStore } from "../store/dashboardStore";
+import { useLayoutStore } from "../store/layoutStore";
 import PdfToolModal, { pdfTools } from "./PdfTools";
 import NudgesPanel from "./NudgesPanel";
 import ProfileLinksModal from "./ProfileLinksModal";
@@ -87,9 +88,9 @@ const RightPanel = ({ onClose }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { isDarkMode, toggleDarkMode } = useThemeStore();
+  const { isRightPanelOpen: isOpen, toggleRightPanel } = useLayoutStore();
 
   // -- State ---------------------------------------------------------------
-  const [isOpen, setIsOpen] = useState(true);
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [activeTool, setActiveTool] = useState(null);
@@ -199,7 +200,7 @@ const RightPanel = ({ onClose }) => {
   return (
     <>
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={toggleRightPanel}
         className={`fixed top-1/2 -translate-y-1/2 z-[60] bg-surface w-8 h-16 flex items-center justify-center rounded-l-2xl shadow-[0_4px_14px_rgba(0,0,0,0.05)] border border-border border-r-0 transition-all duration-300 ${isOpen ? "right-80" : "right-0"} hidden xl:flex`}
         title="Toggle Panel"
       >

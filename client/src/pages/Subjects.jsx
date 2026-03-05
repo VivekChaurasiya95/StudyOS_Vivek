@@ -21,6 +21,7 @@ import { useAuth } from "../context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useNudgeStore } from "../store/nudgeStore";
+import { useLayoutStore } from "../store/layoutStore";
 import NudgesPanel from "../components/NudgesPanel";
 
 const API = "http://localhost:5000/api/subjects";
@@ -29,6 +30,7 @@ const axiosCfg = { withCredentials: true };
 const Subjects = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { isRightPanelOpen: isRightPanelOpenDesktop } = useLayoutStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
   const [selectedSubject, setSelectedSubject] = useState(null);
@@ -168,12 +170,12 @@ const Subjects = () => {
         />
       )}
       <div
-        className={`fixed inset-y-0 right-0 z-50 w-full sm:w-80 transform transition-transform duration-300 ease-in-out xl:translate-x-0 ${isRightPanelOpen ? "translate-x-0" : "translate-x-full xl:translate-x-0"}`}
+        className={`fixed inset-y-0 right-0 z-50 w-full sm:w-80 transform transition-transform duration-300 ease-in-out shrink-0 ${isRightPanelOpen ? "translate-x-0" : "translate-x-full"} ${isRightPanelOpenDesktop ? "xl:relative xl:transform-none xl:translate-x-0" : "xl:fixed xl:translate-x-full"}`}
       >
         <RightPanel onClose={() => setIsRightPanelOpen(false)} />
       </div>
 
-      <main className="flex-1 md:ml-20 xl:mr-80 p-4 md:p-8 overflow-y-auto h-screen relative z-0">
+      <main className={`flex-1 md:ml-20 p-4 md:p-8 overflow-y-auto h-screen relative z-0 ${isRightPanelOpenDesktop ? 'xl:mr-80' : 'xl:mr-0'}`}>
         {/* Header */}
         <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           {/* Mobile top bar */}
