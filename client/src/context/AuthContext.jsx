@@ -12,10 +12,12 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const checkUser = async () => {
-            // Check for the "Logged In" hint to avoid 401 errors in console for guests
+            // Need both the hint and an actual token
             const authHint = localStorage.getItem('mantessa_logged_in');
+            const token = localStorage.getItem('mantessa_token');
 
-            if (!authHint) {
+            if (!authHint || !token) {
+                localStorage.removeItem('mantessa_logged_in');
                 setLoading(false);
                 return;
             }
