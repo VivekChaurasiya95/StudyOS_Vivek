@@ -16,6 +16,21 @@ axios.interceptors.request.use((config) => {
   return config;
 });
 
+// On any 401, clear stale session and redirect to login
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('mantessa_logged_in');
+      localStorage.removeItem('mantessa_token');
+      if (!window.location.pathname.includes('/login') && !window.location.pathname.includes('/register')) {
+        window.location.href = '/login';
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <App />
