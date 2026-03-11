@@ -230,57 +230,57 @@ const features = [
     icon: LayoutDashboard,
     title: "All-in-One Dashboard",
     desc: "Your entire academic life in one view. Track tasks, schedules, and goals without the clutter.",
-    bg: "bg-blue-100 dark:bg-blue-900/40",
-    color: "text-blue-600 dark:text-blue-400",
+    bg: "bg-blue-600",
+    color: "text-white",
   },
   {
     icon: Clock,
     title: "Focus Timer",
     desc: "A built-in Pomodoro timer that tracks your deep work sessions and blocks distractions automatically.",
-    bg: "bg-red-100 dark:bg-red-900/40",
-    color: "text-red-600 dark:text-red-400",
+    bg: "bg-red-500",
+    color: "text-white",
   },
   {
     icon: CheckSquare,
     title: "Smart Tasks",
     desc: "More than just a todo list. Organizes assignments by priority, subject, and looming deadlines.",
-    bg: "bg-emerald-100 dark:bg-emerald-900/40",
-    color: "text-emerald-600 dark:text-emerald-400",
+    bg: "bg-emerald-600",
+    color: "text-white",
   },
   {
     icon: Calendar,
     title: "Student Calendar",
     desc: "Synced with your tasks. Visualize exam dates and study blocks with a drag-and-drop interface.",
-    bg: "bg-purple-100 dark:bg-purple-900/40",
-    color: "text-purple-600 dark:text-purple-400",
+    bg: "bg-purple-600",
+    color: "text-white",
   },
   {
     icon: StickyNote,
     title: "Quick Notes",
     desc: "Capture ideas instantly. Sticky notes live on your dashboard for those 'aha!' moments.",
-    bg: "bg-yellow-100 dark:bg-yellow-900/40",
-    color: "text-yellow-600 dark:text-yellow-400",
+    bg: "bg-yellow-500",
+    color: "text-white",
   },
   {
     icon: Calculator,
     title: "Study Tools",
     desc: "Integrated scientific calculator and formula sheets so you never have to switch apps.",
-    bg: "bg-pink-100 dark:bg-pink-900/40",
-    color: "text-pink-600 dark:text-pink-400",
+    bg: "bg-pink-600",
+    color: "text-white",
   },
   {
     icon: Pencil,
     title: "Infinite Canvas",
     desc: "A whiteboard for your thoughts. Sketch diagrams, mind maps, and solve problems visually.",
-    bg: "bg-orange-100 dark:bg-orange-900/40",
-    color: "text-orange-600 dark:text-orange-400",
+    bg: "bg-orange-500",
+    color: "text-white",
   },
   {
     icon: Users,
     title: "Study Groups",
     desc: "Share notebooks and collaborate on study guides with classmates in real-time.",
-    bg: "bg-cyan-100 dark:bg-cyan-900/40",
-    color: "text-cyan-600 dark:text-cyan-400",
+    bg: "bg-cyan-600",
+    color: "text-white",
   },
 ];
 
@@ -401,7 +401,7 @@ export default function LandingPage() {
                className="text-center lg:text-left"
             >
               <motion.div variants={fadeUp}>
-                <span className="inline-block px-3 py-1 mb-6 text-xs font-bold tracking-wider text-emerald-700 dark:text-emerald-300 uppercase bg-emerald-100 dark:bg-emerald-900/30 rounded-full border border-emerald-200 dark:border-emerald-800/50">
+                <span className="inline-block px-3 py-1 mb-6 text-xs font-bold tracking-wider text-white uppercase bg-emerald-600 rounded-full">
                   v1.0 is now live
                 </span>
               </motion.div>
@@ -503,7 +503,7 @@ export default function LandingPage() {
         {/* ── Features Grid ────────────────────────────────────────────── */}
         <section id="features" className="max-w-7xl mx-auto px-4 sm:px-6 mb-16 sm:mb-32">
           <div className="text-center mb-10 sm:mb-20">
-            <SectionLabel color="bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">Everything Included</SectionLabel>
+            <SectionLabel color="bg-emerald-600 text-white">Everything Included</SectionLabel>
             <h2 className="text-2xl sm:text-4xl font-extrabold text-text-main mb-4">
               More than just a todo list
             </h2>
@@ -581,7 +581,7 @@ export default function LandingPage() {
         <section id="methodology" className="max-w-7xl mx-auto px-4 sm:px-6 mb-16 sm:mb-32">
            <div className="grid md:grid-cols-2 gap-16 items-center">
               <div>
-                 <SectionLabel color="bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">The Workflow</SectionLabel>
+                 <SectionLabel color="bg-emerald-600 text-white">The Workflow</SectionLabel>
                  <h2 className="text-2xl sm:text-4xl font-extrabold text-text-main mb-6">Designed for flow, not friction.</h2>
                  <p className="text-lg text-text-secondary mb-10">Mantessa gets out of your way so the only thing you have to focus on is your work.</p>
                  
