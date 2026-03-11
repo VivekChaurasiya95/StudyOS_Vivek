@@ -763,7 +763,10 @@ export default function LandingPage() {
 
           {/* Divider + bottom bar */}
           <div className="border-t border-border pt-6 flex flex-col sm:flex-row justify-between items-center gap-3">
-            <p className="text-xs text-text-muted">© 2026 Mantessa. All rights reserved.</p>
+            <div className="flex items-center gap-2">
+              <img src="/be.jpeg" alt="ByteEdu" className="w-6 h-6 rounded object-contain" />
+              <p className="text-xs text-text-muted">© 2026 ByteEdu Learning Platform. All rights reserved.</p>
+            </div>
             <p className="text-xs text-text-muted">Built with ❤️ for students everywhere</p>
           </div>
         </div>
